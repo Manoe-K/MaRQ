@@ -1,0 +1,44 @@
+mappings:
+  engine:
+    predicateobjects:
+      - [a, 'https://schema.org/EngineSpecification']
+      - [a, 'http://dbpedia.org/ontology/Engine']
+      - [a, 'http://dbpedia.org/ontology/Device']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(engid) $(fueltype) $(trany) $(cylinders)cyl $(displ)]
+      - ['https://auto.schema.org/engineType', $(eng_dscr)]
+      - ['http://dbpedia.org/ontology/cylinderCount', $(cylinders)]
+      - ['https://auto.schema.org/engineDisplacement', $(displ)]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/all-vehicles-model@public/Engine/$(engid)/
+  make:
+    predicateobjects:
+      - [a, 'https://schema.org/Brand']
+      - [a, 'https://schema.org/Organization']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(make)]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/all-vehicles-model@public/Brand/$(make)/
+  model:
+    predicateobjects:
+      - [a, 'http://schema.org/Car']
+      - [a, 'http://schema.org/Vehicle']
+      - [a, 'http://www.ontotext.com/proton/protonext#Car']
+      - [a, 'http://www.ontotext.com/proton/protonext#Vehicle']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(make) $(model) $(year) $(fueltype) $(trany) $(cylinders)cyl]
+      - ['https://schema.org/name', $(make) $(model) $(year) $(fueltype) $(trany) $(cylinders)cyl]
+      - ['https://schema.org/model', $(model)]
+      - ['https://schema.org/manufacturer', make]
+      - ['https://schema.org/brand', make]
+      - ['https://schema.org/fuelType', $(fueltype)]
+      - ['https://schema.org/fuelType', $(fueltype1)]
+      - ['https://auto.schema.org/modelDate', $(year), 'http://www.w3.org/2001/XMLSchema#dateTime']
+      - ['https://schema.org/vehicleModelDate', $(year), 'http://www.w3.org/2001/XMLSchema#dateTime']
+      - ['https://schema.org/productionDate', $(year), 'http://www.w3.org/2001/XMLSchema#dateTime']
+      - ['https://schema.org/category', $(vclass)]
+      - ['https://auto.schema.org/bodyType', $(vclass)]
+      - ['https://schema.org/driveWheelConfiguration', $(drive)]
+      - ['https://schema.org/vehicleTransmission', $(trany)]
+      - ['https://schema.org/vehicleEngine', engine]
+    source: dataset-source
+    subject: https://www.fueleconomy.gov/feg/Find.do?action=sbs&id=$(id)
+sources:
+  dataset-source: [all-vehicles-model@public.json~jsonpath, '$.records.[*].fields']
