@@ -1,4 +1,3 @@
-
 import argparse
 
 from yaml import load
@@ -26,58 +25,38 @@ def get_keys(d, key):
     return {}
 
 
-liste_properties = []
-liste_classes = []
-
-
-#
 def mapping_list(yarrrml):
+    classes = []
+    properties = []
+    datasource = None
     # get  yarrrml key of the yarrrml file
-    key = list(yarrrml.keys())[0]
-
-    liste = get_keys(yarrrml, 'mappings')
-    for mapping_name, mapping in liste.items():
+    mappings = get_keys(yarrrml, 'mappings')
+    for mapping_name, mapping in mappings.items():
         # for each mapping
-        # print(mapping_name)
-        predicate_objects = mapping['predicateobjects']
-
+        predicate_objects = get_keys(mapping, 'predicateobjects')
         for predicate_object in predicate_objects:
             # for each predicate object (list) in mapping
-            # print(predicate_object)
-
-            if predicate_object[0] == 'a' or predicate_object[0] == 'rdf:type':
-                liste_classes.append(predicate_object[1])
-
+            if predicate_object[0] == 'a' \
+                    or predicate_object[0] == 'rdf:type' \
+                    or predicate_object[0] == 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type':
+                classes.append(predicate_object[1])
             else:
-                liste_properties.append(predicate_object[0])
-
-    for mapping_name, mapping in yarrrml_mapping['sources'].items():
+                properties.append(predicate_object[0])
+    for source_name, source in yarrrml_mapping['sources'].items():
         # for each mapping
-        datasource = mapping[0]
-
-    return {'classes': liste_classes,
-                                 'properties:': liste_properties,
-                                 'dataset': datasource}
+        datasource = source[0]
+    return {'classes': classes,
+            'properties:': properties,
+            'dataset': datasource}
 
 
 parser = argparse.ArgumentParser(description='Find federated queries for a federation.')
 parser.add_argument('mapping', type=str, help='yarrrml mapping filepath')
-
 args = parser.parse_args()
-
 # open yarrrml file
 stream = open(args.mapping)
-
-
-
 # loading the text file
 yarrrml_mapping = load(stream, Loader=Loader)
-
-
-#method test
+# method test
 print(mapping_list(yarrrml_mapping))
-
-
-# test = {'classes': liste_classes,
-#  'properties:': liste_properties}
 
