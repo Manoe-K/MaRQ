@@ -46,9 +46,7 @@ def mapping_list(yarrrml):
 
             if predicate_object[0] == 'a' or predicate_object[0] == 'rdf:type':
                 liste_classes.append(predicate_object[1])
-            elif len(predicate_object) == 3:
-                liste_properties.append(predicate_object[0])
-                liste_properties.append(predicate_object[2])
+
             else:
                 liste_properties.append(predicate_object[0])
 
@@ -57,6 +55,7 @@ def mapping_list(yarrrml):
 
 parser = argparse.ArgumentParser(description='Find federated queries for a federation.')
 parser.add_argument('mapping', type=str, help='yarrrml mapping filepath')
+
 args = parser.parse_args()
 
 # open yarrrml file
@@ -64,9 +63,9 @@ stream = open(args.mapping)
 
 
 
-
 # loading the text file
 yarrrml_mapping = load(stream, Loader=Loader)
+
 
 #method test
 print(mapping_list(yarrrml_mapping))
