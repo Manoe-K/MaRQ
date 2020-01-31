@@ -1,38 +1,32 @@
-import re
-import sys
+import argparse
 
-from yaml import load, dump
+from yaml import load
 try:
     from yaml import CLoader as Loader, CDumper as Dumper
 except ImportError:
     from yaml import Loader, Dumper
 
-stream = open(sys.argv[1])
+YARRRML_KEYS = {
+    'mappings': ['mappings', 'mapping'],
+    'predicateobjects': ['predicateobjects', 'predicateobject', 'po'],
+    'predicates': ['predicates', 'predicate', 'p'],
+    'objects': ['objects', 'object', 'o'],
+    'value': ['value', 'v']
+}
 
+parser = argparse.ArgumentParser(description='Find federated queries for a federation.')
+parser.add_argument('mapping', type=str, help='yarrrml mapping filepath')
+args = parser.parse_args()
+
+stream = open(args.mapping)
 
 yarrrml_mapping = load(stream, Loader=Loader)
-# output = dump(data, Dumper=Dumper)
 
-# mot=output.split( '\n' )
-
+print(yarrrml_mapping)
 
 liste_properties = []
 liste_classes = []
 # les_autres = []
-'''
-for m in mot:
-    if "[a," in m:
-        n = re.search(r"a, '(.+?)']", m)
-        if n:
-            liste_classes.append(n.group(1))
-    elif "['" in m:
-        n = re.search(r"'(.+?)',", m)
-        if n:
-            liste_properties .append(n.group(1))
-            #..  else:
-            # les_autres.append(m)
-            # print(len(liste_properties))
-'''
 
 for mapping_name, mapping in yarrrml_mapping['mappings'].items():
     # for each mapping
@@ -41,6 +35,11 @@ for mapping_name, mapping in yarrrml_mapping['mappings'].items():
     for predicate_object in predicate_objects:
         # for each predicate object (list) in mapping
         print(predicate_object)
+        if predicate_object[0] == 'a':
+            print(predicate_object[0])
 
 print(liste_classes)
 print(liste_properties)
+
+test = {'classes': liste_classes,
+        'properties:': liste_properties}
