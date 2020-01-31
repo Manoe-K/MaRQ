@@ -1,3 +1,4 @@
+
 import argparse
 
 from yaml import load
@@ -32,13 +33,13 @@ liste_classes = []
 #
 def mapping_list(yarrrml):
     # get  yarrrml key of the yarrrml file
-    key = list(yarrrml_mapping.keys())[0]
+    key = list(yarrrml.keys())[0]
 
-    liste = get_keys(yarrrml_mapping, key)
+    liste = get_keys(yarrrml, 'mappings')
     for mapping_name, mapping in liste.items():
         # for each mapping
         # print(mapping_name)
-        predicate_objects = mapping[list(mapping.keys())[0]]
+        predicate_objects = mapping['predicateobjects']
 
         for predicate_object in predicate_objects:
             # for each predicate object (list) in mapping
@@ -50,7 +51,13 @@ def mapping_list(yarrrml):
             else:
                 liste_properties.append(predicate_object[0])
 
-    return {'classes': liste_classes, 'properties:': liste_properties}
+    for mapping_name, mapping in yarrrml_mapping['sources'].items():
+        # for each mapping
+        datasource = mapping[0]
+
+    return {'classes': liste_classes,
+                                 'properties:': liste_properties,
+                                 'dataset': datasource}
 
 
 parser = argparse.ArgumentParser(description='Find federated queries for a federation.')
@@ -73,3 +80,4 @@ print(mapping_list(yarrrml_mapping))
 
 # test = {'classes': liste_classes,
 #  'properties:': liste_properties}
+
