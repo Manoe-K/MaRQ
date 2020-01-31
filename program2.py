@@ -7,19 +7,6 @@ try:
 except ImportError:
     from yaml import Loader, Dumper
 
-parser = argparse.ArgumentParser(description='Find federated queries for a federation.')
-parser.add_argument('mapping', type=str, help='yarrrml mapping filepath')
-args = parser.parse_args()
-
-# open yarrrml file
-stream = open(args.mapping)
-
-
-
-
-# loading the text file
-yarrrml_mapping = load(stream, Loader=Loader)
-
 YARRRML_KEYS = {
     'mappings': ['mappings', 'mapping'],
     'predicateobjects': ['predicateobjects', 'predicateobject', 'po'],
@@ -42,12 +29,13 @@ liste_properties = []
 liste_classes = []
 
 
-#def mapping_list(yarrrml):
-# get  yarrrml key of the yarrrml file
-key = list(yarrrml_mapping.keys())[0]
+#
+def mapping_list(yarrrml):
+    # get  yarrrml key of the yarrrml file
+    key = list(yarrrml_mapping.keys())[0]
 
-liste = get_keys(yarrrml_mapping, key)
-for mapping_name, mapping in liste.items():
+    liste = get_keys(yarrrml_mapping, key)
+    for mapping_name, mapping in liste.items():
         # for each mapping
         # print(mapping_name)
         predicate_objects = mapping[list(mapping.keys())[0]]
@@ -64,13 +52,24 @@ for mapping_name, mapping in liste.items():
             else:
                 liste_properties.append(predicate_object[0])
 
-print({'classes': liste_classes, 'properties:': liste_properties})
+    return {'classes': liste_classes, 'properties:': liste_properties}
+
+
+parser = argparse.ArgumentParser(description='Find federated queries for a federation.')
+parser.add_argument('mapping', type=str, help='yarrrml mapping filepath')
+args = parser.parse_args()
+
+# open yarrrml file
+stream = open(args.mapping)
 
 
 
+
+# loading the text file
+yarrrml_mapping = load(stream, Loader=Loader)
 
 #method test
-#print(mapping_list(yarrrml_mapping))
+print(mapping_list(yarrrml_mapping))
 
 
 # test = {'classes': liste_classes,
