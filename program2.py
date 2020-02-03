@@ -50,42 +50,19 @@ def mapping_list(yarrrml):
             'dataset': datasource}
 
 
-
 def mapping_compare(yarrrml_map1, yarrrml_map2):
-
-    classes = []
-    properties = []
-
-    mapping1 = mapping_list(yarrrml_map1)
-    mapping2 = mapping_list(yarrrml_map2)
-
-    for mapping_name, mapping in mapping1.items():
-        # for each mapping
-        classesM1 =mapping1['classes']
-        propertiesM1 = mapping1['properties']
-
-    for mapping_name, mapping in mapping2.items():
-    # for each mapping
-        classesM2 = mapping2['classes']
-        propertiesM2 = mapping2['properties']
-
-    for classes2 in classesM2:
-            for classes1 in classesM1:
-                if classes2==classes1:
-                    classes.append(classes2)
-
-
-
-
-    for properties2 in propertiesM2:
-            for properties1 in propertiesM1:
-                if properties2==properties1:
-                    properties.append(properties2)
-
-
-    return {'classes': classes,
-            'properties:': properties}
-
+    common_classes = []
+    common_properties = []
+    mapping_desc1 = mapping_list(yarrrml_map1)
+    mapping_desc2 = mapping_list(yarrrml_map2)
+    for classes2 in mapping_desc2['classes']:
+        if classes2 in mapping_desc1['classes']:
+            common_classes.append(classes2)
+    for properties2 in mapping_desc2['properties']:
+        if properties2 in mapping_desc1['properties']:
+            common_properties.append(properties2)
+    return {'classes': common_classes,
+            'properties:': common_properties}
 
 
 parser = argparse.ArgumentParser(description='Find federated queries for a federation.')
