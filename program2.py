@@ -14,7 +14,8 @@ YARRRML_KEYS = {
     'objects': ['objects', 'object', 'o'],
     'value': ['value', 'v']
 }
-
+IGNORED_PROPERTIES = ['http://www.w3.org/2000/01/rdf-schema#label',' https://schema.org/name', 'http://www.w3.org/2004/02/skos/core#prefLabel']
+IGNORED_CLASSES = ['https://schema.org/Thing']
 
 def get_keys(d, key):
     # Get the value of the first key in corresponding YARRRML_KEYS that match a key in d
@@ -53,16 +54,28 @@ def mapping_list(yarrrml):
 def mapping_compare(yarrrml_map1, yarrrml_map2):
     common_classes = []
     common_properties = []
+    datasource= []
+
+
     mapping_desc1 = mapping_list(yarrrml_map1)
     mapping_desc2 = mapping_list(yarrrml_map2)
+
+
+    datasource.append(mapping_desc1['dataset'])
+    datasource.append(mapping_desc2['dataset'])
+
+
     for classes2 in mapping_desc2['classes']:
-        if classes2 in mapping_desc1['classes']:
+        if classes2 in mapping_desc1['classes'] and classes2 not in IGNORED_CLASSES:
             common_classes.append(classes2)
     for properties2 in mapping_desc2['properties']:
-        if properties2 in mapping_desc1['properties']:
+        if properties2 in mapping_desc1['properties'] and properties2 not in IGNORED_PROPERTIES:
             common_properties.append(properties2)
     return {'classes': common_classes,
-            'properties:': common_properties}
+            'properties:': common_properties,
+            'dataset': datasource
+
+            }
 
 
 parser = argparse.ArgumentParser(description='Find federated queries for a federation.')
