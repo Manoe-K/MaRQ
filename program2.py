@@ -73,7 +73,7 @@ def mapping_compare(yarrrml_map1, yarrrml_map2):
             common_properties.append(properties2)
     return {'classes': common_classes,
             'properties:': common_properties,
-            'dataset': datasource
+            'datasets': datasource
 
             }
 
