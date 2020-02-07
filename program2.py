@@ -48,7 +48,7 @@ def mapping_list(yarrrml):
         datasource = source[0]
     return {'classes': classes,
             'properties': properties,
-            'dataset': datasource}
+            'datasets': datasource}
 
 
 def mapping_compare(yarrrml_map1, yarrrml_map2):
@@ -61,8 +61,8 @@ def mapping_compare(yarrrml_map1, yarrrml_map2):
     mapping_desc2 = mapping_list(yarrrml_map2)
 
 
-    datasource.append(mapping_desc1['dataset'])
-    datasource.append(mapping_desc2['dataset'])
+    datasource.append(mapping_desc1['datasets'])
+    datasource.append(mapping_desc2['datasets'])
 
 
     for classes2 in mapping_desc2['classes']:
