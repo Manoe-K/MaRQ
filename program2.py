@@ -1,5 +1,8 @@
 import argparse
+import re
+from builtins import property
 
+from sympy import subfactorial, primenu
 from yaml import load
 
 try:
@@ -47,9 +50,46 @@ def mapping_list(yarrrml):
         # for each mapping
         datasource = source[0]
     return {'classes': classes,
-            'properties': properties,
-            'dataset': datasource}
+            'properties':properties,
+            'dataset': datasource,
+            'template':get_templates(yarrrml)}
 
+def get_templates(yarrrml):
+    template_list = {'templates':{}}
+
+
+    # get  yarrrml key of the yarrrml file
+    mappings = get_keys(yarrrml, 'mappings')
+    for mapping_name, mapping in mappings.items():
+        # for each mapping
+
+                predicate_objects= get_keys(mapping, 'predicateobjects')
+                classes = []
+                properties = []
+                for predicate_object in predicate_objects:
+
+                    # for each predicate object (list) in mapping
+                    if predicate_object[0] == 'a' \
+                            or predicate_object[0] == 'rdf:type' \
+                            or predicate_object[0] == 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type':
+                        classes.append(predicate_object[1])
+                    else:
+                        properties.append(predicate_object[0])
+
+
+                tmp = re.search(r'(\(.+?)\)',mapping['subject'])
+                reference = tmp.group(1)
+
+                reference_replace =mapping['subject'].replace(reference,'(field1')
+                template_list['templates'][reference_replace] = {
+                    'classes': classes,  # classes associated to this template (if subject)
+                    'properties': properties,  # properties associated to this template
+                    'position': 'S',  # S or O
+                   'references': {
+                   'field1': '$'+reference+')'
+                                }}
+
+    return template_list
 
 def mapping_compare(yarrrml_map1, yarrrml_map2):
     common_classes = []
@@ -78,6 +118,7 @@ def mapping_compare(yarrrml_map1, yarrrml_map2):
             }
 
 
+
 parser = argparse.ArgumentParser(description='Find federated queries for a federation.')
 parser.add_argument('mapping', type=str, help='yarrrml mapping filepath')
 parser.add_argument('mapping2', type=str, help='yarrrml mapping filepath')
@@ -92,5 +133,14 @@ stream2 = open(args.mapping2)
 yarrrml_mapping = load(stream, Loader=Loader)
 yarrrml_mapping2 = load(stream2, Loader=Loader)
 # method test
-print(mapping_compare(yarrrml_mapping, yarrrml_mapping2))
+#print(mapping_compare(yarrrml_mapping, yarrrml_mapping2))
+
+for mapping_name, mapping in yarrrml_mapping.items():
+    template = []
+    predicate_objects = get_keys(mapping, 'predicateobjects')
+
+
+print(get_templates(yarrrml_mapping))
+
+        # get  yarrrml key of the yarrrml file
 
