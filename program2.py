@@ -49,7 +49,7 @@ def mapping_list(yarrrml):
     for source_name, source in yarrrml_mapping['sources'].items():
         # for each mapping
         datasource = source[0]
-    return {'classes': classes,
+    return {'classes': get_classes(yarrrml),
             'properties':properties,
             'dataset': datasource,
             'template':get_templates(yarrrml)}
@@ -90,6 +90,41 @@ def get_templates(yarrrml):
                                 }}
 
     return template_list
+
+
+def get_classes(yarrrml):
+    classes_list = {'classes': {}}
+
+
+    # get  yarrrml key of the yarrrml file
+    mappings = get_keys(yarrrml, 'mappings')
+    for mapping_name, mapping in mappings.items():
+        # for each mapping
+
+        predicate_objects = get_keys(mapping, 'predicateobjects')
+        classes = []
+        properties = []
+        for predicate_object in predicate_objects:
+
+            # for each predicate object (list) in mapping
+            if predicate_object[0] == 'a' \
+                    or predicate_object[0] == 'rdf:type' \
+                    or predicate_object[0] == 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type':
+                classes.append(predicate_object[1])
+            else:
+                properties.append(predicate_object[0])
+            tmp = re.search(r'(\(.+?)\)', mapping['subject'])
+            reference = tmp.group(1)
+
+            reference_replace = mapping['subject'].replace(reference, '(field1')
+        for i in range(len(classes)):
+            classes_list['classes'][classes[i]] = {
+                  # classes associated to this template (if subject)
+                'properties': properties,  # properties associated to this template
+                'template': reference_replace
+                }
+
+    return classes_list
 
 
 def mapping_compare(yarrrml_map1, yarrrml_map2):
@@ -136,12 +171,9 @@ yarrrml_mapping2 = load(stream2, Loader=Loader)
 # method test
 #print(mapping_compare(yarrrml_mapping, yarrrml_mapping2))
 
-for mapping_name, mapping in yarrrml_mapping.items():
-    template = []
-    predicate_objects = get_keys(mapping, 'predicateobjects')
 
 
-print(get_templates(yarrrml_mapping))
+print(get_classes(yarrrml_mapping))
 
         # get  yarrrml key of the yarrrml file
 
