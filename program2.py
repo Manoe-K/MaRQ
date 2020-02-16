@@ -91,6 +91,7 @@ def get_templates(yarrrml):
 
     return template_list
 
+
 def mapping_compare(yarrrml_map1, yarrrml_map2):
     common_classes = []
     common_properties = []
