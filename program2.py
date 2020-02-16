@@ -50,7 +50,7 @@ def mapping_list(yarrrml):
         # for each mapping
         datasource = source[0]
     return {'classes': get_classes(yarrrml),
-            'properties':properties,
+            'properties':get_properties(yarrrml),
             'dataset': datasource,
             'template':get_templates(yarrrml)}
 
@@ -127,6 +127,43 @@ def get_classes(yarrrml):
     return classes_list
 
 
+def get_properties(yarrrml):
+    properties_list = {'properties': {}}
+
+    # get  yarrrml key of the yarrrml file
+    mappings = get_keys(yarrrml, 'mappings')
+    for mapping_name, mapping in mappings.items():
+        # for each mapping
+
+        predicate_objects = get_keys(mapping, 'predicateobjects')
+        classes = []
+        properties = []
+        references = []
+        for predicate_object in predicate_objects:
+
+            # for each predicate object (list) in mapping
+            if predicate_object[0] == 'a' \
+                    or predicate_object[0] == 'rdf:type' \
+                    or predicate_object[0] == 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type':
+                classes.append(predicate_object[1])
+            else:
+                properties.append(predicate_object[0])
+                references.append(predicate_object[1])
+
+            tmp = re.search(r'(\(.+?)\)', mapping['subject'])
+            reference = tmp.group(1)
+
+            reference_replace = mapping['subject'].replace(reference, '(field1')
+        for i in range(len(properties)):
+            properties_list['properties'][properties[i]] = {
+                # classes associated to this template (if subject)
+                'classes': classes,  # properties associated to this template
+                'template': reference_replace,
+                'references': references
+            }
+
+    return properties_list
+
 def mapping_compare(yarrrml_map1, yarrrml_map2):
     common_classes = []
     common_properties = []
@@ -173,7 +210,7 @@ yarrrml_mapping2 = load(stream2, Loader=Loader)
 
 
 
-print(get_classes(yarrrml_mapping))
+print(get_properties(yarrrml_mapping))
 
         # get  yarrrml key of the yarrrml file
 
