@@ -14,8 +14,11 @@ YARRRML_KEYS = {
     'objects': ['objects', 'object', 'o'],
     'value': ['value', 'v']
 }
+
 IGNORED_PROPERTIES = ['http://www.w3.org/2000/01/rdf-schema#label',' https://schema.org/name', 'http://www.w3.org/2004/02/skos/core#prefLabel']
 IGNORED_CLASSES = ['https://schema.org/Thing']
+
+REF_REGEX = re.compile(r'(\$\(.+?)\)')
 
 
 def get_keys(d, key):
@@ -88,7 +91,7 @@ def get_classes(yarrrml):
                 classes.append(predicate_object[1])
             else:
                 properties.append(predicate_object[0])
-            tmp = re.search(r'(\(.+?)\)', mapping['subject'])
+            tmp = REF_REGEX.search(mapping['subject'])
             reference = tmp.group(1)
 
             reference_replace = mapping['subject'].replace(reference, '(field1')
