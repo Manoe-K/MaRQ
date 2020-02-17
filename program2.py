@@ -38,6 +38,23 @@ def get_generic_template(template):
         references[generic_reference] = reference
     return references, generic_template
 
+def get_classes_properties_references(mapping):
+    classes = []
+    properties = []
+    references = []
+    predicate_objects = get_keys(mapping, 'predicateobjects')
+    for predicate_object in predicate_objects:
+        # for each predicate object (list) in mapping
+        if predicate_object[0] == 'a' \
+                or predicate_object[0] == 'rdf:type' \
+                or predicate_object[0] == 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type':
+            classes.append(predicate_object[1])
+        else:
+            properties.append(predicate_object[0])
+            references.append(predicate_object[1])
+    return references, classes, properties
+
+
 def get_mapping_descr(yarrrml):
     datasource = None
     for source_name, source in yarrrml_mapping['sources'].items():
@@ -54,17 +71,7 @@ def get_templates(yarrrml):
     mappings = get_keys(yarrrml, 'mappings')
     for mapping_name, mapping in mappings.items():
         # for each mapping
-                predicate_objects = get_keys(mapping, 'predicateobjects')
-                classes = []
-                properties = []
-                for predicate_object in predicate_objects:
-                    # for each predicate object (list) in mapping
-                    if predicate_object[0] == 'a' \
-                            or predicate_object[0] == 'rdf:type' \
-                            or predicate_object[0] == 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type':
-                        classes.append(predicate_object[1])
-                    else:
-                        properties.append(predicate_object[0])
+                references, classes, properties = get_classes_properties_references(mapping)
                 references, generic_template = get_generic_template(mapping['subject'])
                 template_list['templates'][generic_template] = {
                     'classes': classes,  # classes associated to this template (if subject)
@@ -80,18 +87,7 @@ def get_classes(yarrrml):
     # get  yarrrml key of the yarrrml file
     mappings = get_keys(yarrrml, 'mappings')
     for mapping_name, mapping in mappings.items():
-        # for each mapping
-        predicate_objects = get_keys(mapping, 'predicateobjects')
-        classes = []
-        properties = []
-        for predicate_object in predicate_objects:
-            # for each predicate object (list) in mapping
-            if predicate_object[0] == 'a' \
-                    or predicate_object[0] == 'rdf:type' \
-                    or predicate_object[0] == 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type':
-                classes.append(predicate_object[1])
-            else:
-                properties.append(predicate_object[0])
+        references, classes, properties = get_classes_properties_references(mapping)
         references, generic_template = get_generic_template(mapping['subject'])
         for i in range(len(classes)):
             classes_list['classes'][classes[i]] = {
@@ -107,20 +103,7 @@ def get_properties(yarrrml):
     # get  yarrrml key of the yarrrml file
     mappings = get_keys(yarrrml, 'mappings')
     for mapping_name, mapping in mappings.items():
-        # for each mapping
-        predicate_objects = get_keys(mapping, 'predicateobjects')
-        classes = []
-        properties = []
-        references = []
-        for predicate_object in predicate_objects:
-            # for each predicate object (list) in mapping
-            if predicate_object[0] == 'a' \
-                    or predicate_object[0] == 'rdf:type' \
-                    or predicate_object[0] == 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type':
-                classes.append(predicate_object[1])
-            else:
-                properties.append(predicate_object[0])
-                references.append(predicate_object[1])
+        references, classes, properties = get_classes_properties_references(mapping)
         references, generic_template = get_generic_template(mapping['subject'])
         for i in range(len(properties)):
             properties_list['properties'][properties[i]] = {
@@ -137,8 +120,8 @@ def mapping_compare(yarrrml_map1, yarrrml_map2):
     common_classes = []
     common_properties = []
     datasource = []
-    mapping_desc1 = mapping_list(yarrrml_map1)
-    mapping_desc2 = mapping_list(yarrrml_map2)
+    mapping_desc1 = get_mapping_descr(yarrrml_map1)
+    mapping_desc2 = get_mapping_descr(yarrrml_map2)
     datasource.append(mapping_desc1['datasets'])
     datasource.append(mapping_desc2['datasets'])
     for classes2 in mapping_desc2['classes']:
