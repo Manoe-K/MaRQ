@@ -18,7 +18,7 @@ YARRRML_KEYS = {
 IGNORED_PROPERTIES = ['http://www.w3.org/2000/01/rdf-schema#label',' https://schema.org/name', 'http://www.w3.org/2004/02/skos/core#prefLabel']
 IGNORED_CLASSES = ['https://schema.org/Thing']
 
-REF_REGEX = re.compile(r'(\$\(.+?)\)')
+REF_REGEX = re.compile(r'(\$\(.+?\))')
 
 
 def get_keys(d, key):
@@ -29,6 +29,14 @@ def get_keys(d, key):
                 return d[key]
     return {}
 
+def get_generic_template(template):
+    generic_template = template
+    references = {}
+    for index, reference in enumerate(REF_REGEX.findall(template), start=1):
+        generic_reference = f'$(field{index})'
+        generic_template = generic_template.replace(reference, generic_reference)
+        references[generic_reference] = reference
+    return references, generic_template
 
 def get_mapping_descr(yarrrml):
     datasource = None
@@ -37,7 +45,7 @@ def get_mapping_descr(yarrrml):
     return {'classes': get_classes(yarrrml),
             'properties': get_properties(yarrrml),
             'datasets': datasource,
-            'template': get_templates(yarrrml)}
+            'templates': get_templates(yarrrml)}
 
 
 def get_templates(yarrrml):
@@ -57,19 +65,12 @@ def get_templates(yarrrml):
                         classes.append(predicate_object[1])
                     else:
                         properties.append(predicate_object[0])
-
-
-                tmp = re.search(r'(\(.+?)\)', mapping['subject'])
-                reference = tmp.group(1)
-
-                reference_replace =mapping['subject'].replace(reference,'(field1')
-                template_list['templates'][reference_replace] = {
+                references, generic_template = get_generic_template(mapping['subject'])
+                template_list['templates'][generic_template] = {
                     'classes': classes,  # classes associated to this template (if subject)
                     'properties': properties,  # properties associated to this template
                     'position': 'S',  # S or O
-                   'references': {
-                   'field1': '$'+reference+')'
-                                }}
+                   'references': references}
 
     return template_list
 
@@ -91,33 +92,27 @@ def get_classes(yarrrml):
                 classes.append(predicate_object[1])
             else:
                 properties.append(predicate_object[0])
-            tmp = REF_REGEX.search(mapping['subject'])
-            reference = tmp.group(1)
-
-            reference_replace = mapping['subject'].replace(reference, '(field1')
+        references, generic_template = get_generic_template(mapping['subject'])
         for i in range(len(classes)):
             classes_list['classes'][classes[i]] = {
-                  # classes associated to this template (if subject)
+                # classes associated to this template (if subject)
                 'properties': properties,  # properties associated to this template
-                'template': reference_replace
+                'templates': generic_template
                 }
     return classes_list
 
 
 def get_properties(yarrrml):
     properties_list = {'properties': {}}
-
     # get  yarrrml key of the yarrrml file
     mappings = get_keys(yarrrml, 'mappings')
     for mapping_name, mapping in mappings.items():
         # for each mapping
-
         predicate_objects = get_keys(mapping, 'predicateobjects')
         classes = []
         properties = []
         references = []
         for predicate_object in predicate_objects:
-
             # for each predicate object (list) in mapping
             if predicate_object[0] == 'a' \
                     or predicate_object[0] == 'rdf:type' \
@@ -126,16 +121,12 @@ def get_properties(yarrrml):
             else:
                 properties.append(predicate_object[0])
                 references.append(predicate_object[1])
-
-            tmp = re.search(r'(\$\(.+?)\)', mapping['subject'])
-            reference = tmp.group(1)
-
-            reference_replace = mapping['subject'].replace(reference, '$(field1)')
+        references, generic_template = get_generic_template(mapping['subject'])
         for i in range(len(properties)):
             properties_list['properties'][properties[i]] = {
                 # classes associated to this template (if subject)
                 'classes': classes,  # properties associated to this template
-                'template': reference_replace,
+                'templates': generic_template,
                 'references': references
             }
 
