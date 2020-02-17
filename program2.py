@@ -27,7 +27,7 @@ def get_keys(d, key):
     return {}
 
 
-def mapping_list(yarrrml):
+def get_mapping_descr(yarrrml):
     datasource = None
     for source_name, source in yarrrml_mapping['sources'].items():
         datasource = source[0]
@@ -56,7 +56,7 @@ def get_templates(yarrrml):
                         properties.append(predicate_object[0])
 
 
-                tmp = re.search(r'(\(.+?)\)',mapping['subject'])
+                tmp = re.search(r'(\(.+?)\)', mapping['subject'])
                 reference = tmp.group(1)
 
                 reference_replace =mapping['subject'].replace(reference,'(field1')
@@ -124,10 +124,10 @@ def get_properties(yarrrml):
                 properties.append(predicate_object[0])
                 references.append(predicate_object[1])
 
-            tmp = re.search(r'(\(.+?)\)', mapping['subject'])
+            tmp = re.search(r'(\$\(.+?)\)', mapping['subject'])
             reference = tmp.group(1)
 
-            reference_replace = mapping['subject'].replace(reference, '(field1')
+            reference_replace = mapping['subject'].replace(reference, '$(field1)')
         for i in range(len(properties)):
             properties_list['properties'][properties[i]] = {
                 # classes associated to this template (if subject)
@@ -174,4 +174,4 @@ yarrrml_mapping = load(stream, Loader=Loader)
 yarrrml_mapping2 = load(stream2, Loader=Loader)
 # method test
 # print(mapping_compare(yarrrml_mapping, yarrrml_mapping2))
-print(get_properties(yarrrml_mapping))
+print(get_mapping_descr(yarrrml_mapping))
