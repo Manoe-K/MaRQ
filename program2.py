@@ -119,18 +119,23 @@ def get_properties(yarrrml):
 def mapping_compare(yarrrml_map1, yarrrml_map2):
     common_classes = []
     common_properties = []
+    common_templates= []
     datasource = []
     mapping_desc1 = get_mapping_descr(yarrrml_map1)
     mapping_desc2 = get_mapping_descr(yarrrml_map2)
     datasource.append(mapping_desc1['datasets'])
     datasource.append(mapping_desc2['datasets'])
-    for classes2 in mapping_desc2['classes']:
-        if classes2 in mapping_desc1['classes'] and classes2 not in IGNORED_CLASSES:
+    for classes2 in mapping_desc2['classes']['classes'].items():
+        if classes2 in mapping_desc1['classes']['classes'].items() and classes2 not in IGNORED_CLASSES:
             common_classes.append(classes2)
-    for properties2 in mapping_desc2['properties']:
-        if properties2 in mapping_desc1['properties'] and properties2 not in IGNORED_PROPERTIES:
+    for properties2 in mapping_desc2['properties']['properties'].items():
+        if properties2 in mapping_desc1['properties']['properties'].items() and properties2 not in IGNORED_PROPERTIES:
             common_properties.append(properties2)
-    return {'classes': common_classes,
+    for templates2 in mapping_desc2['templates']['templates'].items():
+        if templates2 in mapping_desc1['templates']['templates'].items():
+            common_templates.append(templates2)
+    return {'templates': common_templates,
+            'classes': common_classes,
             'properties:': common_properties,
             'datasets': datasource
             }
@@ -150,5 +155,5 @@ stream2 = open(args.mapping2)
 yarrrml_mapping = load(stream, Loader=Loader)
 yarrrml_mapping2 = load(stream2, Loader=Loader)
 # method test
-# print(mapping_compare(yarrrml_mapping, yarrrml_mapping2))
-print(get_mapping_descr(yarrrml_mapping))
+print(mapping_compare(yarrrml_mapping, yarrrml_mapping2))
+
