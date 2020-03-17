@@ -1,5 +1,6 @@
 import argparse
 import re
+import pprint
 from yaml import load
 
 try:
@@ -155,6 +156,7 @@ stream2 = open(args.mapping2)
 yarrrml_mapping = load(stream, Loader=Loader)
 yarrrml_mapping2 = load(stream2, Loader=Loader)
 # method test
-print(mapping_compare(yarrrml_mapping, yarrrml_mapping2))
+pp = pprint.PrettyPrinter(indent=4)
+pp.pprint(mapping_compare(yarrrml_mapping, yarrrml_mapping2))
 
 
