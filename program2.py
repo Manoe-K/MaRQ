@@ -78,7 +78,7 @@ def get_templates(yarrrml):
                     'classes': classes,  # classes associated to this template (if subject)
                     'properties': properties,  # properties associated to this template
                     'position': 'S',  # S or O
-                   'references': references}
+                    'references': references}
 
     return template_list
 
@@ -105,13 +105,14 @@ def get_properties(yarrrml):
     mappings = get_keys(yarrrml, 'mappings')
     for mapping_name, mapping in mappings.items():
         references, classes, properties = get_classes_properties_references(mapping)
-        references, generic_template = get_generic_template(mapping['subject'])
+        references1, generic_template = get_generic_template(mapping['subject'])
         for i in range(len(properties)):
             properties_list['properties'][properties[i]] = {
                 # classes associated to this template (if subject)
                 'classes': classes,  # properties associated to this template
                 'templates': generic_template,
-                'references': references
+                'references_templates':references1,
+                'references': references[i]
             }
 
     return properties_list
@@ -135,12 +136,58 @@ def mapping_compare(yarrrml_map1, yarrrml_map2):
     for templates2 in mapping_desc2['templates']['templates']:
         if templates2 in mapping_desc1['templates']['templates']:
             common_templates.append(templates2)
+
+
     return {'templates': common_templates,
             'classes': common_classes,
-            'properties:': common_properties,
+            'properties': common_properties,
             'datasets': datasource
+
             }
 
+
+def basic_graph_patterns(yarrrml1,yarrrml2):
+    mapping_comp = mapping_compare(yarrrml1, yarrrml2)
+    joins_subject_object = []
+    join_subject_predicat_subject_predicat = []
+    join_subject_subject= []
+    join_object_object= []
+    join_predicat_object_predicat_object = []
+    join_subject_predicat_predicat_object= []
+
+    for object in mapping_comp['classes']:
+        join_object_object.append('?S' + '   ' + '?P' + '  ' + object)
+    for subject in mapping_comp['templates']:
+         join_subject_subject.append(subject + '   ' + '?P' + '  ' + '?O')
+    for template in mapping_comp['templates']:
+        if template in mapping_comp['classes'] and template not in IGNORED_CLASSES:
+            joins_subject_object.append(template + '   ' + '?P' + '  ' + '?O')
+            joins_subject_object.append('?S' + '   ' + '?P' + '  ' + template)
+    for templates, objects in (get_templates(yarrrml1)['templates']).items():
+        if templates in mapping_compare(yarrrml1, yarrrml2)['templates']:
+            for propertie in mapping_compare(yarrrml1, yarrrml2)['properties']:
+                if propertie in objects['properties']:
+                    join_subject_predicat_subject_predicat.append(templates + '  ' + propertie + '  ' + '?O')
+    for properties, object in (get_properties(yarrrml1)['properties']).items():
+        for properties1, object1 in (get_properties(yarrrml2)['properties']).items():
+            if object['references'] == object1['references'] and properties == properties1:
+                join_predicat_object_predicat_object.append('?S' + '  ' + properties + '  ' + object['references'])
+    for properties, objects in (get_properties(yarrrml1)['properties']).items():
+        for properties1, objects1 in (get_properties(yarrrml2)['properties']).items():
+            if properties == properties1 :
+                if objects['references'] == objects1['templates'] or objects['templates']   == objects1['references']:
+                    join_subject_predicat_predicat_object.append('?S'+'  '+properties+'  '+objects1['references'])
+                    join_subject_predicat_predicat_object.append(objects['templates'] +'  '+properties+'  '+'?O')
+
+
+
+
+    return {'subject-subject': join_subject_subject,
+            'subject,predicat-subject,predicat': join_subject_predicat_subject_predicat,
+            'object-object': join_object_object,
+           'predicat_object_predicat_object':join_predicat_object_predicat_object,
+            'subject-object': joins_subject_object,
+            'subject_predicat_predicat_object':join_subject_predicat_predicat_object}
 
 parser = argparse.ArgumentParser(description='Find federated queries for a federation.')
 parser.add_argument('mapping', type=str, help='yarrrml mapping filepath')
@@ -157,6 +204,7 @@ yarrrml_mapping = load(stream, Loader=Loader)
 yarrrml_mapping2 = load(stream2, Loader=Loader)
 # method test
 pp = pprint.PrettyPrinter(indent=4)
-pp.pprint(mapping_compare(yarrrml_mapping, yarrrml_mapping2))
+#pp.pprint(mapping_compare(yarrrml_mapping, yarrrml_mapping2))
 
+print(basic_graph_patterns(yarrrml_mapping,yarrrml_mapping2))
 
