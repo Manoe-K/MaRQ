@@ -112,7 +112,8 @@ def get_properties(yarrrml):
                 'classes': classes,  # properties associated to this template
                 'templates': generic_template,
                 'references_templates':references1,
-                'references': references[i]
+                'references': references[i],
+                'mapping_name':mapping_name
             }
 
     return properties_list
@@ -146,39 +147,55 @@ def mapping_compare(yarrrml_map1, yarrrml_map2):
             }
 def get_join_subject_subject(yarrrml1,yarrrml2):
     join_subject_subject= []
-    id_template=0
+
+
 
     for templates,objects  in  (get_templates(yarrrml1)['templates']).items():
             for templates1, objects1 in (get_templates(yarrrml2)['templates']).items():
                 if templates == templates1 :
-                    id_template=id_template+1
+                    template = []
+                    id_object = 0
                     for propertie in objects['properties'] :
                         if propertie not in objects1['properties']:
-                            join_subject_subject.append('?S'+str(id_template) + '   ' + propertie + '  ' + '?O')
+                            id_object =id_object +1
+                            template.append('?S' + '   ' + propertie + '  ' + '?O'+str(id_object))
                     for propertie1 in objects1['properties']:
                         if propertie1 not in objects['properties']:
-                            join_subject_subject.append('?S'+str(id_template)+ '   ' + propertie1 + '  ' + '?O2')
+                            id_object =id_object+1
+                            template.append('?S'+ '   ' + propertie1 + '  ' + '?O'+str(id_object))
                     for classe in objects['classes'] :
                         if classe not in objects1['classes']:
-                            join_subject_subject.append('?S'+str(id_template) + '   ' + 'rdf:type' + '  ' + classe)
+                            template.append('?S'+ '   ' + 'rdf:type' + '  ' + classe)
                     for classe1 in objects1['classes'] :
                         if classe1 not in objects['classes']:
-                            join_subject_subject.append('?S' +str(id_template)+ '   ' + 'rdf:type' + '  ' + classe1)
-
+                            template.append('?S' +'   ' + 'rdf:type' + '  ' + classe1)
+                    join_subject_subject.append(template)
     return {'subject-subject': join_subject_subject}
+
 
 def get_join_object_object(yarrrml1,yarrrml2):
     join_object_object= []
-    triple_object = []
-    id_classe=0
+
     for classes, objects in (get_classes(yarrrml1)['classes']).items():
         for classes1, objects1 in (get_classes(yarrrml2)['classes']).items():
+            object = []
             if classes == classes1 and classes not in IGNORED_CLASSES:
-                id_classe=id_classe+1
+
                 if objects1['templates'] not in mapping_compare(yarrrml1,yarrrml2)['templates']:
-                    join_object_object.append(objects1['templates'] + '   ' + 'rdf:type' + '  ' + '?O'+str(id_classe))
+                    object.append(objects1['templates'] + '   ' + 'rdf:type' + '  ' + '?O')
                 if objects['templates'] not in mapping_compare(yarrrml1, yarrrml2)['templates']:
-                    join_object_object.append(objects['templates'] + '   ' + 'rdf:type' + '  ' + '?O'+str(id_classe))
+                    object.append(objects['templates'] + '   ' + 'rdf:type' + '  ' + '?O')
+                    join_object_object.append(object)
+    for properties, objects in (get_properties(yarrrml1)['properties']).items():
+        for properties1, objects1 in (get_properties(yarrrml2)['properties']).items():
+            if objects1['references'] == objects['references']:
+                object = []
+                if objects1['templates'] not in mapping_compare(yarrrml1, yarrrml2)['templates']:
+                    object.append(objects1['templates'] + '   ' + properties1 + '  ' + '?O' )
+                if objects['templates'] not in mapping_compare(yarrrml1, yarrrml2)['templates']:
+                    object.append(objects['templates'] + '   ' + properties + '  ' + '?O')
+                    join_object_object.append(object)
+
 
     return {'object_object': join_object_object}
 
@@ -187,25 +204,49 @@ def get_join_subject_object(yarrrml1,yarrrml2):
     joins_subject_object = []
     triple_sub_obj= []
     for template in mapping_comp['templates']:
-        if template in mapping_comp['classes'] and template not in IGNORED_CLASSES:
+        if template in mapping_comp['classes'] :
+            object = []
             for templates,object in get_templates(yarrrml1).items():
                 if template==templates:
                     for classes in object['classes']:
-                        triple_sub_obj.append('?S' + '   ' + 'rdf:type' + '  ' + classes)
+                        if classes not in mapping_comp['classes']:
+                            object.append('?S' + '   ' + 'rdf:type' + '  ' + classes)
                 else:
-                    triple_sub_obj.append(templates + '   ' + 'rdf:type' + '  ' + '?O')
+                    object.append(templates + '   ' + 'rdf:type' + '  ' + '?O')
 
             for templates1,object1 in get_templates(yarrrml2).items():
                 if template==templates1:
                     for classes1 in object1['classes']:
-                        triple_sub_obj.append('?S' + '   ' + 'rdf:type' + '  ' + classes1)
+                        if classes not in mapping_comp['classes']:
+
+                            object.append('?S' + '   ' + 'rdf:type' + '  ' + classes1)
                 else:
-                    triple_sub_obj.append(templates1 + '   ' + 'rdf:type' + '  ' + '?O')
-    for triple in triple_sub_obj:
-        if triple not in joins_subject_object:
-            joins_subject_object.append(triple)
-    return {
-            'subject-object': joins_subject_object}
+                    object.append(templates1 + '   ' + 'rdf:type' + '  ' + '?O')
+            joins_subject_object.append(object)
+
+    for propertie,objects in (get_properties(yarrrml1)['properties']).items():
+                for propertie2, objects1 in (get_properties(yarrrml2)['properties']).items():
+                    if objects['mapping_name']==objects1['references']:
+                        object = []
+                        for classes in objects['classes']:
+                            if classes not in objects1['classes']:
+                                object.append('?S'+ '   ' + 'rdf:type' + '  ' + classes)
+                        if propertie != propertie2:
+                            object.append(objects1['templates'] + '   ' + propertie2 + '  ' + '?O')
+                            joins_subject_object.append(object )
+
+    for propertie, objects in (get_properties(yarrrml2)['properties']).items():
+                for propertie2, objects1 in (get_properties(yarrrml1)['properties']).items():
+                    if objects['mapping_name'] == objects1['references']:
+                        object = []
+                        for classes in objects['classes']:
+                            if classes not in objects1['classes']:
+                                object.append('?S' + '   ' + 'rdf:type' + '  ' + classes)
+                        if propertie!= propertie2:
+                            object.append(objects1['templates'] + '   ' + propertie2 + '  ' + '?O')
+                            joins_subject_object.append(object )
+    print(len(joins_subject_object))
+    return { 'subject-object': joins_subject_object}
 
 
 
@@ -227,4 +268,5 @@ pp = pprint.PrettyPrinter(indent=4)
 #pp.pprint(mapping_compare(yarrrml_mapping, yarrrml_mapping2))
 
 print(get_join_subject_object(yarrrml_mapping,yarrrml_mapping2))
+
 
