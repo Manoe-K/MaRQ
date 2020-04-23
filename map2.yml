@@ -1,0 +1,110 @@
+mappings:
+  City:
+    predicateobjects:
+      - [a, 'http://dbpedia.org/ontology/City']
+      - [a, 'http://dbpedia.org/ontology/Settlement']
+      - [a, 'http://schema.org/City']
+      - [a, 'http://dbpedia.org/ontology/PopulatedPlace']
+      - [a, 'http://ontology.eil.utoronto.ca/icontact.owl#SchemaOrgThing']
+      - [a, 'http://schema.org/AdministrativeArea']
+      - [a, 'http://schema.org/Place']
+      - [a, 'http://rdfs.co/juso/SpatialThing']
+      - [a, 'http://schema.org/Thing']
+      - [a, 'http://purl.org/goodrelations/v1#Location']
+      - [a, 'http://www.w3.org/2002/07/owl#Thing']
+      - [a, 'http://purl.org/goodrelations/v1#LocationOfSalesOrServiceProvisioning']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(city)]
+      - ['http://dbpedia.org/ontology/country', Country]
+      - ['http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#hasLocation', Country]
+      - ['http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#associatedWith', Country]
+      - ['http://www.ontologydesignpatterns.org/ont/lmm/LMM_L1.owl#hasContext', Country]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/air-bnb-listings@public/City/$(city)/
+  Country:
+    predicateobjects:
+      - [a, 'http://dbpedia.org/ontology/Country']
+      - [a, 'http://dbpedia.org/ontology/PopulatedPlace']
+      - [a, 'http://schema.org/Country']
+      - [a, 'http://dbpedia.org/ontology/Place']
+      - [a, 'http://ontology.eil.utoronto.ca/icontact.owl#SchemaOrgThing']
+      - [a, 'http://schema.org/AdministrativeArea']
+      - [a, 'http://schema.org/Place']
+      - [a, 'http://rdfs.co/juso/SpatialThing']
+      - [a, 'http://schema.org/Thing']
+      - [a, 'http://purl.org/goodrelations/v1#Location']
+      - [a, 'http://www.w3.org/2002/07/owl#Thing']
+      - [a, 'http://purl.org/goodrelations/v1#LocationOfSalesOrServiceProvisioning']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(country)]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/air-bnb-listings@public/Country/$(country)/
+  Home:
+    predicateobjects:
+      - [a, 'http://www.w3.org/2006/vcard/ns#Home']
+      - [a, 'http://www.w3.org/2006/vcard/ns#Type']
+      - [a, 'http://schema.org/Residence']
+      - [a, 'http://schema.org/Place']
+      - [a, 'http://rdfs.co/juso/SpatialThing']
+      - [a, 'http://schema.org/Thing']
+      - [a, 'http://purl.org/goodrelations/v1#Location']
+      - [a, 'http://schema.org/Accommodation']
+      - ['http://www.w3.org/2003/01/geo/wgs84_pos#lat_long', $(coordinates)]
+      - ['http://schema.org/price', $(column_10)]
+      - ['http://dbpedia.org/ontology/price', $(column_10)]
+      - ['http://dbpedia.org/ontology/address', $(column_20)]
+      - ['http://schema.org/address', $(column_20)]
+      - ['http://rdfs.co/juso/address', $(column_20)]
+      - ['http://www.w3.org/ns/locn#address', $(column_20)]
+      - ['http://ontology.eil.utoronto.ca/icontact.owl#address', $(column_20)]
+      - ['http://schema.org/category', $(room_type)]
+      - ['http://dbpedia.org/ontology/owner', Host]
+      - ['http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#associatedWith', Host]
+      - ['https://schema.org/containedInPlace', Neighbourhood]
+      - ['http://dbpedia.org/ontology/location', Neighbourhood]
+      - ['http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#hasLocation', Neighbourhood]
+      - ['http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#associatedWith', Neighbourhood]
+      - ['http://www.ontologydesignpatterns.org/ont/lmm/LMM_L1.owl#hasContext', Neighbourhood]
+    source: dataset-source
+    subject: https://www.airbnb.com/rooms/$(listing_id)
+  Host:
+    predicateobjects:
+      - [a, 'http://schema.org/Person']
+      - [a, 'http://purl.org/dc/terms/Agent']
+      - [a, 'http://purl.org/goodrelations/v1#BusinessEntity']
+      - [a, 'http://rhizomik.net/ontologies/copyrightonto.owl#LegalPerson']
+      - [a, 'http://schema.org/Thing']
+      - [a, 'http://www.w3.org/2000/10/swap/pim/contact#Person']
+      - [a, 'http://www.w3.org/2003/01/geo/wgs84_pos#SpatialThing']
+      - [a, 'http://xmlns.com/foaf/0.1/Agent']
+      - [a, 'http://xmlns.com/foaf/0.1/Person']
+      - [a, 'http://www.w3.org/ns/org#FormalOrganization']
+      - [a, 'http://www.w3.org/2002/07/owl#Thing']
+      - [a, 'http://www.w3.org/2000/10/swap/pim/contact#SocialEntity']
+      - [a, 'http://www.w3.org/2000/01/rdf-schema#Resource']
+      - [a, 'http://purl.org/dc/elements/1.1/Agent']
+      - [a, 'http://purl.org/net/provenance/ns#HumanAgent']
+      - [a, 'http://purl.org/vocab/frbr/core#ResponsibleEntity']
+      - [a, 'http://www.w3.org/2006/vcard/ns#Individual']
+      - [a, 'http://www.w3.org/ns/prov#Agent']
+      - [a, 'http://www.w3.org/2006/vcard/ns#Kind']
+    source: dataset-source
+    subject: https://www.airbnb.com/users/show/$(host_id)
+  Neighbourhood:
+    predicateobjects:
+      - [a, 'http://schema.org/Place']
+      - [a, 'http://rdfs.co/juso/SpatialThing']
+      - [a, 'http://schema.org/Thing']
+      - [a, 'http://purl.org/goodrelations/v1#Location']
+      - [a, 'http://www.w3.org/2002/07/owl#Thing']
+      - [a, 'http://purl.org/goodrelations/v1#LocationOfSalesOrServiceProvisioning']
+      - [a, 'http://dbpedia.org/ontology/CityDistrict']
+      - [a, 'http://dbpedia.org/ontology/Settlement']
+      - [a, 'http://dbpedia.org/ontology/PopulatedPlace']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(neighbourhood)]
+      - ['http://dbpedia.org/ontology/city', City]
+      - ['http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#hasLocation', City]
+      - ['http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#associatedWith', City]
+      - ['http://www.ontologydesignpatterns.org/ont/lmm/LMM_L1.owl#hasContext', City]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/air-bnb-listings@public/Neighbourhood/$(neighbourhood)/
+sources:
+  dataset-source: [air-bnb-listings@public.json~jsonpath, '$.records.[*].fields']
