@@ -1,12 +1,15 @@
 # MappingQueryFinder
 
-This project is an approach to generate federated queries from RDF mappings.program2.py
+This project is an approach to generate federated queries from RDF mappings.
 
 ## Installation
 
 We assume that `Python3` and `pip` is installed
 
-Created with `Pycharm`
+Download IDE for python
+
+this project was created with 
+`Pycharm`
 
 Installation in a virtualenv is strongly recommended
 
