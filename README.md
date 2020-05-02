@@ -24,6 +24,6 @@ Install dependencies with pip:
 ## Run script
 
 Run the following command:
-`python program.py mapping1.yml mapping1.yml`
+`python program.py mapping1.yml mapping2.yml`
 
 Where `mapping1.yml`and `mapping2.yml` are our YARRRML mapping.
