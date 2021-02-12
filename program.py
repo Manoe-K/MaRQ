@@ -1,5 +1,4 @@
 import sys
-import pprint
 from yaml import load
 
 import re
@@ -46,7 +45,9 @@ def get_classes_properties_references(mapping):
     classes = []
     properties = []
     references = []
+
     predicate_objects = get_keys(mapping, 'predicateobjects')
+
     for predicate_object in predicate_objects:
         # for each predicate object (list) in mapping
         if predicate_object[0] == 'a' \
@@ -56,7 +57,8 @@ def get_classes_properties_references(mapping):
         else:
             properties.append(predicate_object[0])
             references.append(predicate_object[1])
-    return references, classes, properties
+
+    return classes, properties, references
 
 
 def get_templates(yarrrml):
@@ -65,7 +67,7 @@ def get_templates(yarrrml):
     mappings = get_keys(yarrrml, 'mappings')
     for mapping_name, mapping in mappings.items():
         # for each mapping
-        references, classes, properties = get_classes_properties_references(mapping)
+        classes, properties, references = get_classes_properties_references(mapping)
         references, generic_template = get_generic_template(mapping['subject'])
         template_list['templates'][generic_template] = {
             'classes': classes,  # classes associated to this template (if subject)
@@ -116,7 +118,7 @@ def get_properties(yarrrml):
     # get  yarrrml key of the yarrrml file
     mappings = get_keys(yarrrml, 'mappings')
     for mapping_name, mapping in mappings.items():
-        references, classes, properties = get_classes_properties_references(mapping)
+        classes, properties, references = get_classes_properties_references(mapping)
         references1, generic_template = get_generic_template(mapping['subject'])
         for i in range(len(properties)):
             properties_list['properties'][properties[i]] = {
@@ -189,8 +191,6 @@ def get_join_subject_subject(yarrrml1, yarrrml2):
 
                 if triple_patterns:
 
-                    # print('Subject: ', information1['references']['$(field1)'], ' == ', information2['references']['$(field1)'])
-
                     join_subject_subject.append(triple_patterns)
                     data.append(count_pattern)
 
@@ -252,8 +252,6 @@ def get_join_object_object(yarrrml1, yarrrml2):
 
                 if triple_patterns:
 
-                    # print('Object: ', objects1[i], ' == ', objects2[y])
-
                     join_object_object.append(triple_patterns)
                     data.append(count_pattern)
 
@@ -312,8 +310,6 @@ def get_join_subject_object(yarrrml1, yarrrml2):
 
                 if triple_patterns:
 
-                    # print('Object-Subject: ', objects1[i], ' == ', information2['references']['$(field1)'])
-
                     join_subject_object.append(triple_patterns)
                     data.append(count_pattern)
 
@@ -354,8 +350,6 @@ def get_join_subject_object(yarrrml1, yarrrml2):
 
                 if triple_patterns:
 
-                    # print('Subject-Object: ', information1['references']['$(field1)'], '==', objects2[i])
-
                     join_subject_object.append(triple_patterns)
                     data.append(count_pattern)
 
@@ -387,9 +381,6 @@ def get_results(yarrrml_mappings, mapping_names):
     # compare every mapping with every other mappings and print data and results
     for it1 in range(0, len(yarrrml_mappings)):
         for it2 in range(it1+1, len(yarrrml_mappings)):
-
-            print(it1)
-            print(it2)
 
             data_1, results_1 = get_join_subject_subject(yarrrml_mappings[it1], yarrrml_mappings[it2])
             data_2, results_2 = get_join_object_object(yarrrml_mappings[it1], yarrrml_mappings[it2])
@@ -507,11 +498,11 @@ def get_results(yarrrml_mappings, mapping_names):
                 query = 'SELECT *\nWHERE {\n'
                 for y in results_1['subject-subject'][j]:
                     if y[1] == "M1 M2":
-                        query += f' {y[0]}   # {mapping_names[it1]}  and {mapping_names[it2]}'
+                        query += f' {y[0]}   #{mapping_names[it1]} and {mapping_names[it2]}'
                     if y[1] == "M1":
-                        query += f' {y[0]}   # {mapping_names[it1]}'
+                        query += f' {y[0]}   #{mapping_names[it1]}'
                     if y[1] == "M2":
-                        query += f' {y[0]}   # {mapping_names[it2]}'
+                        query += f' {y[0]}   #{mapping_names[it2]}'
                 query += '\n}'
                 result['queries'].append(query)
 
@@ -519,34 +510,41 @@ def get_results(yarrrml_mappings, mapping_names):
                 query = 'SELECT *\nWHERE {\n'
                 for y in results_2['object-object'][j]:
                     if y[1] == "M1 M2":
-                        query += f' {y[0]}   # {mapping_names[it1]}  and {mapping_names[it2]}'
+                        query += f' {y[0]}   #{mapping_names[it1]} and {mapping_names[it2]}'
                     if y[1] == "M1":
-                        query += f' {y[0]}   # {mapping_names[it1]}'
+                        query += f' {y[0]}   #{mapping_names[it1]}'
                     if y[1] == "M2":
-                        query += f' {y[0]}   # {mapping_names[it2]}'
+                        query += f' {y[0]}   #{mapping_names[it2]}'
                 query += '\n}'
                 result['queries'].append(query)
+                print(query)
 
             for j in range(len(results_3['subject-object'])):
                 query = 'SELECT *\nWHERE {\n'
                 for y in results_3['subject-object'][j]:
                     if y[1] == "M1 M2":
-                        query += f' {y[0]}   # {mapping_names[it1]}  and {mapping_names[it2]}'
+                        query += f' {y[0]}   #{mapping_names[it1]} and {mapping_names[it2]}'
                     if y[1] == "M1":
-                        query += f' {y[0]}   # {mapping_names[it1]}'
+                        query += f' {y[0]}   #{mapping_names[it1]}'
                     if y[1] == "M2":
-                        query += f' {y[0]}   # {mapping_names[it2]}'
+                        query += f' {y[0]}   #{mapping_names[it2]}'
                 query += '\n}'
                 result['queries'].append(query)
     return result
 
 
+# open and load yarrrml file
 list_mappings = []
-
-# open yarrrml file
 for yarrrml in sys.argv[1:]:
     list_mappings.append(load(open(yarrrml), Loader=Loader))
 
+mappings_names =[]
+for it in range(1, len(sys.argv[1:])+1):
+    mappings_names.append("mapping" + str(it))
+
 # test print
-print(get_results(list_mappings, list_mappings))
+results = get_results(list_mappings, mappings_names)
+print(results['data'])
+print()
+print(results['queries'])
 
