@@ -1,0 +1,62 @@
+mappings:
+  City:
+    predicateobjects:
+      - [a, 'http://dbpedia.org/ontology/City']
+      - [a, 'http://dbpedia.org/ontology/Settlement']
+      - [a, 'http://schema.org/City']
+      - [a, 'http://dbpedia.org/ontology/PopulatedPlace']
+      - [a, 'http://ontology.eil.utoronto.ca/icontact.owl#SchemaOrgThing']
+      - [a, 'http://schema.org/AdministrativeArea']
+      - [a, 'http://schema.org/Place']
+      - [a, 'http://rdfs.co/juso/SpatialThing']
+      - [a, 'http://schema.org/Thing']
+      - [a, 'http://purl.org/goodrelations/v1#Location']
+      - [a, 'http://www.w3.org/2002/07/owl#Thing']
+      - [a, 'http://purl.org/goodrelations/v1#LocationOfSalesOrServiceProvisioning']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(city)]
+      - ['http://dbpedia.org/ontology/country', Country]
+      - ['http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#hasLocation', Country]
+      - ['http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#associatedWith', Country]
+      - ['http://www.ontologydesignpatterns.org/ont/lmm/LMM_L1.owl#hasContext', Country]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/airbnb-averages@public@public/City/$(city)/
+  Country:
+    predicateobjects:
+      - [a, 'http://dbpedia.org/ontology/Country']
+      - [a, 'http://dbpedia.org/ontology/PopulatedPlace']
+      - [a, 'http://schema.org/Country']
+      - [a, 'http://dbpedia.org/ontology/Place']
+      - [a, 'http://ontology.eil.utoronto.ca/icontact.owl#SchemaOrgThing']
+      - [a, 'http://schema.org/AdministrativeArea']
+      - [a, 'http://schema.org/Place']
+      - [a, 'http://rdfs.co/juso/SpatialThing']
+      - [a, 'http://schema.org/Thing']
+      - [a, 'http://purl.org/goodrelations/v1#Location']
+      - [a, 'http://www.w3.org/2002/07/owl#Thing']
+      - [a, 'http://purl.org/goodrelations/v1#LocationOfSalesOrServiceProvisioning']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(country)]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/airbnb-averages@public/Country/$(country)/
+  Neighbourhood:
+    predicateobjects:
+      - [a, 'http://schema.org/Place']
+      - [a, 'http://rdfs.co/juso/SpatialThing']
+      - [a, 'http://schema.org/Thing']
+      - [a, 'http://purl.org/goodrelations/v1#Location']
+      - [a, 'http://www.w3.org/2002/07/owl#Thing']
+      - [a, 'http://purl.org/goodrelations/v1#LocationOfSalesOrServiceProvisioning']
+      - [a, 'http://dbpedia.org/ontology/CityDistrict']
+      - [a, 'http://dbpedia.org/ontology/Settlement']
+      - [a, 'http://dbpedia.org/ontology/PopulatedPlace']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(neighbourhood)]
+      - ['http://www.w3.org/2003/01/geo/wgs84_pos#lat_long', $(geo_point_2d)]
+      - ['http://www.w3.org/2003/01/geo/wgs84_pos#SpatialThing', $(geo_shape)]
+      - ['http://www.mindswap.org/2003/owl/geo/geoFeatures20040307.owl#shape', $(geo_shape)]
+      - ['http://dbpedia.org/ontology/city', City]
+      - ['http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#hasLocation', City]
+      - ['http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#associatedWith', City]
+      - ['http://www.ontologydesignpatterns.org/ont/lmm/LMM_L1.owl#hasContext', City]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/airbnb-averages@public/Neighbourhood/$(neighbourhood)/
+sources:
+  dataset-source: [airbnb-averages@public.json~jsonpath, '$.records.[*].fields']

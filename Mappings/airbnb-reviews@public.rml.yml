@@ -1,0 +1,49 @@
+mappings:
+  Review:
+    predicateobjects:
+      - [a, 'https://schema.org/Review']
+      - [a, 'https://schema.org/CreativeWork']
+      - ['https://schema.org/reviewBody', $(comments)]
+      - ['https://schema.org/reviewAspect', 'Accommodation review']
+      - ['https://schema.org/dateCreated', $(date), 'http://www.w3.org/2001/XMLSchema#date']
+      - ['https://schema.org/author', Reviewer]
+      - ['https://schema.org/itemReviewed', Home]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/airbnb-reviews@public/Review/$(id)/
+  Home:
+    predicateobjects:
+      - [a, 'http://www.w3.org/2006/vcard/ns#Home']
+      - [a, 'http://www.w3.org/2006/vcard/ns#Type']
+      - [a, 'http://schema.org/Residence']
+      - [a, 'http://schema.org/Place']
+      - [a, 'http://rdfs.co/juso/SpatialThing']
+      - [a, 'http://purl.org/goodrelations/v1#Location']
+      - [a, 'http://schema.org/Accommodation']
+    source: dataset-source
+    subject: https://www.airbnb.com/rooms/$(listing_id)
+  Reviewer:
+    predicateobjects:
+      - [a, 'http://schema.org/Person']
+      - [a, 'http://purl.org/dc/terms/Agent']
+      - [a, 'http://purl.org/goodrelations/v1#BusinessEntity']
+      - [a, 'http://rhizomik.net/ontologies/copyrightonto.owl#LegalPerson']
+      - [a, 'http://www.w3.org/2000/10/swap/pim/contact#Person']
+      - [a, 'http://www.w3.org/2003/01/geo/wgs84_pos#SpatialThing']
+      - [a, 'http://xmlns.com/foaf/0.1/Agent']
+      - [a, 'http://xmlns.com/foaf/0.1/Person']
+      - [a, 'http://www.w3.org/ns/org#FormalOrganization']
+      - [a, 'http://www.w3.org/2002/07/owl#Thing']
+      - [a, 'http://www.w3.org/2000/10/swap/pim/contact#SocialEntity']
+      - [a, 'http://www.w3.org/2000/01/rdf-schema#Resource']
+      - [a, 'http://purl.org/dc/elements/1.1/Agent']
+      - [a, 'http://purl.org/net/provenance/ns#HumanAgent']
+      - [a, 'http://purl.org/vocab/frbr/core#ResponsibleEntity']
+      - [a, 'http://www.w3.org/2006/vcard/ns#Individual']
+      - [a, 'http://www.w3.org/ns/prov#Agent']
+      - [a, 'http://www.w3.org/2006/vcard/ns#Kind']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(reviewer_name)]
+      - ['https://schema.org/name', $(reviewer_name)]
+    source: dataset-source
+    subject: https://www.airbnb.com/users/show/$(reviewer_id)
+sources:
+  dataset-source: [airbnb-reviews@public.json~jsonpath, '$.records.[*].fields']
