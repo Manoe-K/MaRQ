@@ -24,9 +24,9 @@ Install dependencies with pip:
 ## Run script
 
 Run the following command:
-`python program.py mapping1.yml mapping2.yml`
+`python Marq.py mapping1.yml mapping2.yml`
 
 Where `mapping1.yml`and `mapping2.yml` are our YARRRML mapping.
 
-To run he updated program run:
-`python newprog mapping1.yml mapping2.yml`
+To run the old program:
+`python program.py mapping1.yml mapping2.yml`
