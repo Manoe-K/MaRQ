@@ -30,7 +30,7 @@ def get_subjects(yarrrml):
 
     subjects = set()
     for mapping_name, mapping in mappings.items():
-        subjects.add(yarrrml['mappings'][mapping_name]['subject'])
+        subjects.add(get_keys(yarrrml, 'mappings')[mapping_name]['subject'])
 
     return subjects
 
@@ -56,39 +56,52 @@ def get_objects(yarrrml):
 
 
 # Return all of the predicate of a mapping in relation to a given subject
-def get_predicates_of_subject(yarrrml, subject):
+def get_triplets_of_subject(yarrrml, subject):
     mappings = get_keys(yarrrml, 'mappings')
 
-    predicates = set()
+    predicates = []
+    objects = []
     for mapping_name, mapping in mappings.items():
         if subject == mappings[mapping_name]['subject']:
             predicate_objects = get_keys(mapping, 'predicateobjects')
             for predicate, object in predicate_objects:
-                predicates.add(predicate)
-
-    return predicates
+                predicates.append(predicate)
+                objects.append(object)
+    return predicates, objects
 
 
 # Return all of the predicate of a mapping in relation to a given object
-def get_predicates_of_object(yarrrml, object_to_search):
+def get_triplets_of_object(yarrrml, object_to_search):
     mappings = get_keys(yarrrml, 'mappings')
 
     names = set()
     for mapping_name, mapping in mappings.items():
         names.add(mapping_name)
 
-    predicates = set()
+    predicates = []
+    subjects = []
     for mapping_name, mapping in mappings.items():
         predicate_objects = get_keys(mapping, 'predicateobjects')
         for predicate, object in predicate_objects:
             if object in names:     # If object is a reference, we use the subject it refers to
                 if object_to_search == mappings[object]['subject']:
-                    predicates.add(predicate)
+                    predicates.append(predicate)
+                    subjects.append(mapping['subject'])
             else:
                 if object_to_search == object:
-                    predicates.add(predicate)
+                    predicates.append(predicate)
+                    subjects.append(mapping['subject'])
+    return predicates, subjects
 
-    return predicates
+
+def equals(predicates1, predicates2, objects1, objects2):
+    for i in range(len(predicates1)):
+        if predicates1[i] == 'a' or predicates1[i] == 'rdf:type':
+            for j in range(len(predicates2)):
+                if predicates2[j] == 'a' or predicates2[j] == 'rdf:type':
+                    if objects1[i] == objects2[j]:
+                        return True
+    return False
 
 
 def get_join_subject_subject(yarrrml1, yarrrml2):
@@ -100,24 +113,25 @@ def get_join_subject_subject(yarrrml1, yarrrml2):
     for subject1 in get_subjects(yarrrml1):
         for subject2 in get_subjects(yarrrml2):
 
-            if subject1 == subject2:
+            predicates1, objects1 = get_triplets_of_subject(yarrrml1, subject1)
+            predicates2, objects2 = get_triplets_of_subject(yarrrml2, subject1)
+
+            if subject1 == subject2 or equals(predicates1, predicates2, objects1, objects2):
                 id_subject = id_subject+1
                 triple_patterns = []
-                predicates1 = get_predicates_of_subject(yarrrml1, subject1)
-                predicates2 = get_predicates_of_subject(yarrrml2, subject1)
 
-                for predicate in predicates1:
-                    if predicate in predicates2:
+                for i in range(len(predicates1)):
+                    if predicates1[i] in predicates2:
                         source = 'M1 M2'
                     else:
                         source = 'M1'
                     id_object = id_object+1
-                    triple_patterns.append(['?S'+str(id_subject)+' '+str(predicate)+' ?O'+str(id_object), source])
-                for predicate in predicates2:
-                    if predicate not in predicates1:
+                    triple_patterns.append(['?S'+str(id_subject)+' '+str(predicates1[i])+' ?O'+str(id_object), source])
+                for i in range(len(predicates2)):
+                    if predicates2[i] not in predicates1:
                         source = 'M2'
                         id_object = id_object+1
-                        triple_patterns.append(['?S'+str(id_subject)+' '+str(predicate)+' ?O'+str(id_object), source])
+                        triple_patterns.append(['?S'+str(id_subject)+' '+str(predicates2[i])+' ?O'+str(id_object), source])
                 bgp.append(triple_patterns)
 
     return bgp
@@ -135,23 +149,23 @@ def get_join_object_object(yarrrml1, yarrrml2):
             if object1 == object2:
                 id_object = id_object+1
                 triple_patterns = []
-                predicates1 = get_predicates_of_object(yarrrml1, object1)
-                predicates2 = get_predicates_of_object(yarrrml2, object1)
-                for predicate in predicates1:
-                    if predicate in predicates2:
+                predicates1, subjects1 = get_triplets_of_object(yarrrml1, object1)
+                predicates2, subjects2 = get_triplets_of_object(yarrrml2, object1)
+                for i in range(len(predicates1)):
+                    if predicates1[i] in predicates2:
                         source = 'M1 M2'
                     else:
                         source = 'M1'
                     id_subject = id_subject+1
-                    if predicate == 'rdf:type' or predicate == 'a': # if the object is a type, we keep it for the pattern
-                        triple_patterns.append(['?S'+str(id_subject)+' '+str(predicate)+' '+object1, source])
+                    if predicates1[i] == 'rdf:type' or predicates1[i] == 'a': # if the object is a type, we keep it for the pattern
+                        triple_patterns.append(['?S'+str(id_subject)+' '+str(predicates1[i])+' '+object1, source])
                     else:
-                        triple_patterns.append(['?S'+str(id_subject)+' '+str(predicate)+' ?O'+str(id_object), source])
-                for predicate in predicates2:
-                    if predicate not in predicates1:
+                        triple_patterns.append(['?S'+str(id_subject)+' '+str(predicates1[i])+' ?O'+str(id_object), source])
+                for i in range(len(predicates2)):
+                    if predicates2[i] not in predicates1:
                         source = 'M2'
                         id_subject = id_subject+1
-                        triple_patterns.append(['?S'+str(id_subject)+' '+str(predicate)+' ?O'+str(id_object), source])
+                        triple_patterns.append(['?S'+str(id_subject)+' '+str(predicates2[i])+' ?O'+str(id_object), source])
                 bgp.append(triple_patterns)
 
     return bgp
@@ -168,22 +182,22 @@ def get_join_subject_object(yarrrml1, yarrrml2):
             if subject == object:
                 id_template = id_template + 1
                 triple_patterns = []
-                predicates1 = get_predicates_of_subject(yarrrml1, subject)
-                predicates2 = get_predicates_of_object(yarrrml2, subject)
-                for predicate in predicates1:
-                    if predicate in predicates2:
+                predicates1, objects1 = get_triplets_of_subject(yarrrml1, subject)
+                predicates2, subjects2 = get_triplets_of_object(yarrrml2, subject)
+                for i in range(len(predicates1)):
+                    if predicates1[i] in predicates2:
                         source = 'M1 M2'
                     else:
                         source = 'M1'
                     id_filler = id_filler + 1
-                    triple_patterns.append(['?T' + str(id_template) + ' ' + str(predicate) + ' ?O' + str(id_filler), source])
-                for predicate in predicates2:
-                    if predicate in predicates1:
+                    triple_patterns.append(['?T' + str(id_template) + ' ' + str(predicates1[i]) + ' ?F' + str(id_filler), source])
+                for i in range(len(predicates2)):
+                    if predicates2[i] in predicates1:
                         source = 'M1 M2'
                     else:
                         source = 'M2'
                     id_filler = id_filler + 1
-                    triple_patterns.append(['?S' + str(id_filler) + ' ' + str(predicate) + ' ?T' + str(id_template), source])
+                    triple_patterns.append(['?F' + str(id_filler) + ' ' + str(predicates2[i]) + ' ?T' + str(id_template), source])
                 bgp.append(triple_patterns)
 
     return bgp
