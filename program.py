@@ -32,13 +32,12 @@ def get_keys(d, key):
 
 
 def get_generic_template(template):
+    global_list_templates.append(template)
     generic_template = template
-    references = {}
-    for index, reference in enumerate(REF_REGEX.findall(template), start=1):
-        generic_reference = f'$(field{index})'
-        generic_template = generic_template.replace(reference, generic_reference)
-        references[generic_reference] = reference
-    return references, generic_template
+    generic_reference = f'$(field{global_list_templates.index(template)})'
+    generic_template = generic_template.replace(template, generic_reference)
+
+    return generic_template
 
 
 def get_classes_properties_references(mapping):
@@ -68,7 +67,7 @@ def get_templates(yarrrml):
     for mapping_name, mapping in mappings.items():
         # for each mapping
         classes, properties, references = get_classes_properties_references(mapping)
-        references, generic_template = get_generic_template(mapping['subject'])
+        generic_template = get_generic_template(mapping['subject'])
         template_list['templates'][generic_template] = {
             'classes': classes,  # classes associated to this template (if subject)
             'properties': properties,  # properties associated to this template
@@ -143,7 +142,7 @@ def get_join_subject_subject(yarrrml1, yarrrml2):
     join_subject_subject = []
 
     # for subject in both subject(mapping1) and subject(mapping2)
-    for subject1, information1 in (get_templates(yarrrml1)['templates']).items():
+    for subject1, information1 in (get_templates(yarrrml1)['templates']).items():           # TO FIX !! ".items()" ne marche pas comme ça
         for subject2, information2 in (get_templates(yarrrml2)['templates']).items():
             if subject1 == subject2:
 
@@ -273,7 +272,7 @@ def get_join_subject_object(yarrrml1, yarrrml2):
 
     # pour les objets du mapping 1 communs aux sujets du mapping 2
     for i in range(len(objects1)):
-        for subject2, information2 in (get_templates(yarrrml2)['templates']).items():
+        for subject2, information2 in (get_templates(yarrrml2)['templates']).items():           # TO FIX !! ".items()" ne marche pas comme ça
             if objects1[i] == subject2:
 
                 triple_patterns = []
@@ -506,6 +505,8 @@ def get_results(yarrrml_mappings, mapping_names):
                         query += f' {y[0]}   #{mapping_names[it2]},\n'
                 query += '\n}'
                 result['queries'].append(query)
+                print("subject-subject")
+                print(query)
 
             for j in range(len(results_2['object-object'])):
                 query = 'SELECT *\nWHERE {\n'
@@ -518,6 +519,8 @@ def get_results(yarrrml_mappings, mapping_names):
                         query += f' {y[0]}   #{mapping_names[it2]},\n'
                 query += '\n}'
                 result['queries'].append(query)
+                print("object-object")
+                print(query)
 
             for j in range(len(results_3['subject-object'])):
                 query = 'SELECT *\nWHERE {\n'
@@ -530,9 +533,13 @@ def get_results(yarrrml_mappings, mapping_names):
                         query += f' {y[0]}   #{mapping_names[it2]}.\n'
                 query += '\n}'
                 result['queries'].append(query)
+                print("subject-object")
+                print(query)
 
     return result
 
+
+global_list_templates = []
 
 # open and load yarrrml file
 list_mappings = []
@@ -545,7 +552,7 @@ for it in range(1, len(sys.argv[1:])+1):
 
 # test print
 results = get_results(list_mappings, mappings_names)
-print(results['data'])
-print()
-print(results['queries'])
+#print(results['data'])
+#print()
+#print(results['queries'])
 
