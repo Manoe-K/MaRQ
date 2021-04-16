@@ -192,7 +192,7 @@ def get_join_subject_object(yarrrml1, yarrrml2):
 # Main
 list_mappings = []
 for yarrrml in sys.argv[1:]:
-    list_mappings.append(load(open('Mappings/'+yarrrml), Loader=Loader))
+    list_mappings.append(load(open(yarrrml), Loader=Loader))
 
 for bgp in get_join_subject_object(list_mappings[0], list_mappings[1]):
     print('Bgp:')
