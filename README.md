@@ -27,3 +27,6 @@ Run the following command:
 `python program.py mapping1.yml mapping2.yml`
 
 Where `mapping1.yml`and `mapping2.yml` are our YARRRML mapping.
+
+To run he updated program run:
+`python newprogram mapping1.yml mapping2.yml`
