@@ -29,4 +29,4 @@ Run the following command:
 Where `mapping1.yml`and `mapping2.yml` are our YARRRML mapping.
 
 To run he updated program run:
-`python newprogram mapping1.yml mapping2.yml`
+`python newprog mapping1.yml mapping2.yml`
