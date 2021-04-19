@@ -56,13 +56,13 @@ def get_objects(yarrrml):
 
 
 # Return all of the predicate of a mapping in relation to a given subject
-def get_triplets_of_subject(yarrrml, subject):
+def get_triplets_of_subject(yarrrml, subject_to_search_with):
     mappings = get_keys(yarrrml, 'mappings')
 
     predicates = []
     objects = []
     for mapping_name, mapping in mappings.items():
-        if subject == mappings[mapping_name]['subject']:
+        if subject_to_search_with == mappings[mapping_name]['subject']:
             predicate_objects = get_keys(mapping, 'predicateobjects')
             for predicate, object in predicate_objects:
                 predicates.append(predicate)
@@ -71,7 +71,7 @@ def get_triplets_of_subject(yarrrml, subject):
 
 
 # Return all of the predicate of a mapping in relation to a given object
-def get_triplets_of_object(yarrrml, object_to_search):
+def get_triplets_of_object(yarrrml, object_to_search_with):
     mappings = get_keys(yarrrml, 'mappings')
 
     names = set()
@@ -84,11 +84,11 @@ def get_triplets_of_object(yarrrml, object_to_search):
         predicate_objects = get_keys(mapping, 'predicateobjects')
         for predicate, object in predicate_objects:
             if object in names:     # If object is a reference, we use the subject it refers to
-                if object_to_search == mappings[object]['subject']:
+                if object_to_search_with == mappings[object]['subject']:
                     predicates.append(predicate)
                     subjects.append(mapping['subject'])
             else:
-                if object_to_search == object:
+                if object_to_search_with == object:
                     predicates.append(predicate)
                     subjects.append(mapping['subject'])
     return predicates, subjects
@@ -114,7 +114,7 @@ def get_join_subject_subject(yarrrml1, yarrrml2):
         for subject2 in get_subjects(yarrrml2):
 
             predicates1, objects1 = get_triplets_of_subject(yarrrml1, subject1)
-            predicates2, objects2 = get_triplets_of_subject(yarrrml2, subject1)
+            predicates2, objects2 = get_triplets_of_subject(yarrrml2, subject2)
 
             if subject1 == subject2 or equals(predicates1, predicates2, objects1, objects2):
                 id_subject = id_subject+1
@@ -146,11 +146,17 @@ def get_join_object_object(yarrrml1, yarrrml2):
     for object1 in get_objects(yarrrml1):
         for object2 in get_objects(yarrrml2):
 
-            if object1 == object2:
+            predicates1, objects1 = get_triplets_of_subject(yarrrml1, object1)
+            predicates2, objects2 = get_triplets_of_subject(yarrrml2, object2)
+
+            equal = False
+            if predicates1 and predicates2:
+                equal = equals(predicates1, predicates2, object1, object2)
+
+            if object1 == object2 or equal:
                 id_object = id_object+1
                 triple_patterns = []
-                predicates1, subjects1 = get_triplets_of_object(yarrrml1, object1)
-                predicates2, subjects2 = get_triplets_of_object(yarrrml2, object1)
+
                 for i in range(len(predicates1)):
                     if predicates1[i] in predicates2:
                         source = 'M1 M2'
@@ -179,11 +185,17 @@ def get_join_subject_object(yarrrml1, yarrrml2):
     for subject in get_subjects(yarrrml1):
         for object in get_objects(yarrrml2):
 
-            if subject == object:
+            predicates1, objects1 = get_triplets_of_subject(yarrrml1, subject)
+            predicates2, objects2 = get_triplets_of_subject(yarrrml2, object)
+
+            equal = False
+            if predicates1 and predicates2:
+                equal = equals(predicates1, predicates2, subject, object)
+
+            if subject == object or equal:
                 id_template = id_template + 1
                 triple_patterns = []
-                predicates1, objects1 = get_triplets_of_subject(yarrrml1, subject)
-                predicates2, subjects2 = get_triplets_of_object(yarrrml2, subject)
+
                 for i in range(len(predicates1)):
                     if predicates1[i] in predicates2:
                         source = 'M1 M2'
@@ -208,7 +220,7 @@ list_mappings = []
 for yarrrml in sys.argv[1:]:
     list_mappings.append(load(open(yarrrml), Loader=Loader))
 
-for bgp in get_join_subject_subject(list_mappings[0], list_mappings[1]):
+for bgp in get_join_subject_object(list_mappings[0], list_mappings[1]):
     print('Bgp:')
     for tp in bgp:
         print(tp)
