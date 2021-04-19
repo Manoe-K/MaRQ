@@ -215,12 +215,55 @@ def get_join_subject_object(yarrrml1, yarrrml2):
     return bgp
 
 
+def compare(yarrrml1, yarrrml2):
+    return {'subject-subject': get_join_subject_subject(yarrrml1, yarrrml2),
+            'object-object': get_join_subject_subject(yarrrml1, yarrrml2),
+            'subject-object': get_join_subject_subject(yarrrml1, yarrrml2),
+            'object-subject': get_join_subject_subject(yarrrml2, yarrrml1)}
+
+
+def print_result(results):
+    i = 1
+    print()
+    print('S-S')
+    for bgp in results['subject-subject']:
+        print()
+        print('bgp', i)
+        i = i+1
+        for queries in bgp:
+            print(queries)
+    print()
+    print()
+    print('O-O')
+    for bgp in results['object-object']:
+        print()
+        print('bgp', i)
+        i = i+1
+        for queries in bgp:
+            print(queries)
+    print()
+    print()
+    print('S-O')
+    for bgp in results['subject-object']:
+        print()
+        print('bgp', i)
+        i = i+1
+        for queries in bgp:
+            print(queries)
+    print()
+    print()
+    print('O-S')
+    for bgp in results['object-subject']:
+        print()
+        print('bgp', i)
+        i = i+1
+        for queries in bgp:
+            print(queries)
+
+
 # Main
 list_mappings = []
 for yarrrml in sys.argv[1:]:
     list_mappings.append(load(open(yarrrml), Loader=Loader))
 
-for bgp in get_join_subject_object(list_mappings[0], list_mappings[1]):
-    print('Bgp:')
-    for tp in bgp:
-        print(tp)
+print_result(compare(list_mappings[0], list_mappings[1]))
