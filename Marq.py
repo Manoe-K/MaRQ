@@ -217,9 +217,9 @@ def get_join_subject_object(yarrrml1, yarrrml2):
 
 def compare(yarrrml1, yarrrml2):
     return {'subject-subject': get_join_subject_subject(yarrrml1, yarrrml2),
-            'object-object': get_join_subject_subject(yarrrml1, yarrrml2),
-            'subject-object': get_join_subject_subject(yarrrml1, yarrrml2),
-            'object-subject': get_join_subject_subject(yarrrml2, yarrrml1)}
+            'object-object': get_join_object_object(yarrrml1, yarrrml2),
+            'subject-object': get_join_subject_object(yarrrml1, yarrrml2),
+            'object-subject': get_join_subject_object(yarrrml2, yarrrml1)}
 
 
 def print_result(results):
