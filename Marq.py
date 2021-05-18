@@ -94,16 +94,18 @@ def get_triplets_of_object(yarrrml, object_to_search_with):
     return predicates, subjects
 
 
+# attention la saturation crée trop de faux positif (car thing == thing)
 def equals(predicates1, predicates2, objects1, objects2):
-    for i in range(len(predicates1)):
-        if predicates1[i] == 'a' or predicates1[i] == 'rdf:type':
-            for j in range(len(predicates2)):
-                if predicates2[j] == 'a' or predicates2[j] == 'rdf:type':
-                    if objects1[i] == objects2[j]:
-                        return True
+    if predicates1[0] == 'a' or predicates1[0] == 'rdf:type':
+        if predicates2[0] == 'a' or predicates2[0] == 'rdf:type':
+            if objects1[0] == objects2[0]:
+            # TODO: ne test que le premier objet car les mappings sont saturés (temporaire)
+                return True
     return False
 
 
+# function described in the paper:
+# return the triple patterns created with Subject-Subject joins
 def get_join_subject_subject(yarrrml1, yarrrml2):
 
     bgp = []
@@ -202,7 +204,13 @@ def get_join_subject_object(yarrrml1, yarrrml2):
                     else:
                         source = 'M1'
                     id_filler = id_filler + 1
-                    triple_patterns.append(['?T' + str(id_template) + ' ' + str(predicates1[i]) + ' ?F' + str(id_filler), source])
+                    if predicates1[i] == 'rdf:type' or predicates1[
+                        i] == 'a':  # if the object is a type, we keep it for the pattern
+                        triple_patterns.append(
+                            ['?T' + str(id_template) + ' ' + str(predicates1[i]) + ' ' + objects1[i], source])
+                    else:
+                        triple_patterns.append(
+                            ['?T' + str(id_template) + ' ' + str(predicates1[i]) + ' ?F' + str(id_filler), source])
                 for i in range(len(predicates2)):
                     if predicates2[i] in predicates1:
                         source = 'M1 M2'
@@ -216,7 +224,7 @@ def get_join_subject_object(yarrrml1, yarrrml2):
 
 
 def compare(yarrrml1, yarrrml2):
-    return {'subject-subject': get_join_subject_subject(yarrrml1, yarrrml2),
+    return {'subject-subject': S2SjoinDetection(yarrrml1, yarrrml2),
             'object-object': get_join_object_object(yarrrml1, yarrrml2),
             'subject-object': get_join_subject_object(yarrrml1, yarrrml2),
             'object-subject': get_join_subject_object(yarrrml2, yarrrml1)}
