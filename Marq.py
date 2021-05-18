@@ -95,7 +95,7 @@ def get_triplets_of_object(yarrrml, object_to_search_with):
 
 
 # attention la saturation crée trop de faux positif (car thing == thing)
-def equals(predicates1, predicates2, objects1, objects2):
+def joinable(predicates1, predicates2, objects1, objects2):
     if predicates1[0] == 'a' or predicates1[0] == 'rdf:type':
         if predicates2[0] == 'a' or predicates2[0] == 'rdf:type':
             if objects1[0] == objects2[0]:
@@ -118,7 +118,7 @@ def S2S_joinDetection(yarrrml1, yarrrml2):
             predicates1, objects1 = get_triplets_of_subject(yarrrml1, subject1)
             predicates2, objects2 = get_triplets_of_subject(yarrrml2, subject2)
 
-            if subject1 == subject2 or equals(predicates1, predicates2, objects1, objects2):
+            if subject1 == subject2 or joinable(predicates1, predicates2, objects1, objects2):
                 id_subject = id_subject+1
                 triple_patterns = []
 
@@ -151,11 +151,11 @@ def O2O_joinDetection(yarrrml1, yarrrml2):
             predicates1, objects1 = get_triplets_of_subject(yarrrml1, object1)
             predicates2, objects2 = get_triplets_of_subject(yarrrml2, object2)
 
-            equal = False
+            join = False
             if predicates1 and predicates2:
-                equal = equals(predicates1, predicates2, object1, object2)
+                join = joinable(predicates1, predicates2, object1, object2)
 
-            if object1 == object2 or equal:
+            if object1 == object2 or join:
                 id_object = id_object+1
                 triple_patterns = []
 
@@ -190,11 +190,11 @@ def S2O_joinDetection(yarrrml1, yarrrml2):
             predicates1, objects1 = get_triplets_of_subject(yarrrml1, subject)
             predicates2, objects2 = get_triplets_of_subject(yarrrml2, object)
 
-            equal = False
+            join = False
             if predicates1 and predicates2:
-                equal = equals(predicates1, predicates2, subject, object)
+                join = joinable(predicates1, predicates2, subject, object)
 
-            if subject == object or equal:
+            if subject == object or join:
                 id_template = id_template + 1
                 triple_patterns = []
 
