@@ -106,7 +106,7 @@ def equals(predicates1, predicates2, objects1, objects2):
 
 # function described in the paper:
 # return the triple patterns created with Subject-Subject joins
-def get_join_subject_subject(yarrrml1, yarrrml2):
+def S2S_joinDetection(yarrrml1, yarrrml2):
 
     bgp = []
     id_subject = 0
@@ -139,7 +139,7 @@ def get_join_subject_subject(yarrrml1, yarrrml2):
     return bgp
 
 
-def get_join_object_object(yarrrml1, yarrrml2):
+def O2O_joinDetection(yarrrml1, yarrrml2):
 
     bgp = []
     id_subject = 0
@@ -179,7 +179,7 @@ def get_join_object_object(yarrrml1, yarrrml2):
     return bgp
 
 
-def get_join_subject_object(yarrrml1, yarrrml2):
+def S2O_joinDetection(yarrrml1, yarrrml2):
     bgp = []
     id_filler = 0
     id_template = 0
@@ -224,10 +224,10 @@ def get_join_subject_object(yarrrml1, yarrrml2):
 
 
 def compare(yarrrml1, yarrrml2):
-    return {'subject-subject': S2SjoinDetection(yarrrml1, yarrrml2),
-            'object-object': get_join_object_object(yarrrml1, yarrrml2),
-            'subject-object': get_join_subject_object(yarrrml1, yarrrml2),
-            'object-subject': get_join_subject_object(yarrrml2, yarrrml1)}
+    return {'subject-subject': S2S_joinDetection(yarrrml1, yarrrml2),
+            'object-object':   O2O_joinDetection(yarrrml1, yarrrml2),
+            'subject-object':  S2O_joinDetection(yarrrml1, yarrrml2),
+            'object-subject':  S2O_joinDetection(yarrrml2, yarrrml1)}
 
 
 def print_result(results):
