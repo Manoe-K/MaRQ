@@ -95,13 +95,20 @@ def get_triplets_of_object(yarrrml, object_to_search_with):
 
 
 # attention la saturation crée trop de faux positif (car thing == thing)
+# TODO: à changer: Ne test que le premier objet car les mappings sont saturés (temporaire)
 def joinable(predicates1, predicates2, objects1, objects2):
     if predicates1[0] == 'a' or predicates1[0] == 'rdf:type':
         if predicates2[0] == 'a' or predicates2[0] == 'rdf:type':
             if objects1[0] == objects2[0]:
-            # TODO: ne test que le premier objet car les mappings sont saturés (temporaire)
                 return True
     return False
+    #for i in range(len(predicates1)):
+    #   if predicates1[i] == 'a' or predicates1[i] == 'rdf:type':
+    #       for j in range(len(predicates2)):
+    #           if predicates2[j] == 'a' or predicates1[j] == 'rdf:type':
+    #               if objects1[i] == objects2[j]:
+    #                    return True
+    #return False
 
 
 # function described in the paper:
@@ -119,7 +126,8 @@ def S2S_joinDetection(yarrrml1, yarrrml2):
             predicates2, objects2 = get_triplets_of_subject(yarrrml2, subject2)
 
             if subject1 == subject2 or joinable(predicates1, predicates2, objects1, objects2):
-                id_subject = id_subject+1
+                id_subject = id_subject + 1
+                id_object = 0
                 triple_patterns = []
 
                 for i in range(len(predicates1)):
@@ -128,12 +136,38 @@ def S2S_joinDetection(yarrrml1, yarrrml2):
                     else:
                         source = 'M1'
                     id_object = id_object+1
-                    triple_patterns.append(['?S'+str(id_subject)+' '+str(predicates1[i])+' ?O'+str(id_object), source])
+
+                    if predicates1[i] == 'rdf:type' or predicates1[i] == 'a':  # if the object is a type, we keep it for the pattern
+                        triple_patterns.append(
+                            ['?S' + str(id_subject) + ' ' + str(predicates1[i]) + ' ' + objects1[i], source])
+                    else:
+                        triple_patterns.append(
+                            ['?S' + str(id_subject) + ' ' + str(predicates1[i]) + ' ?O' + str(id_object), source])
+
                 for i in range(len(predicates2)):
-                    if predicates2[i] not in predicates1:
+
+                    #test if the (predicate, object) pair wasn't already used from the other mapping
+                    used_pair = False
+                    for j in range(len(predicates1)):
+                        #print('here1:', predicates2[i], predicates1[j], objects2[i], predicates1[j])
+                        #if we have a common predicate that don't refer to a type object
+                        if predicates2[i] == predicates1[j] and not (predicates2[i] == 'a' or predicates2[i] == 'rdf:type'):
+                            used_pair = True
+                        #if we have a common predicate and a common subject
+                        elif predicates2[i] == predicates1[j] and objects2[i] == objects1[j]:
+                            used_pair = True
+
+                    if not used_pair:
                         source = 'M2'
                         id_object = id_object+1
-                        triple_patterns.append(['?S'+str(id_subject)+' '+str(predicates2[i])+' ?O'+str(id_object), source])
+
+                        if predicates2[i] == 'rdf:type' or predicates2[i] == 'a':  # if the object is a type, we keep it for the pattern
+                            triple_patterns.append(
+                                ['?S' + str(id_subject) + ' ' + str(predicates2[i]) + ' ' + objects2[i], source])
+                        else:
+                            triple_patterns.append(
+                                ['?S' + str(id_subject) + ' ' + str(predicates2[i]) + ' ?O' + str(id_object), source])
+
                 bgp.append(triple_patterns)
 
     return bgp
@@ -156,25 +190,26 @@ def O2O_joinDetection(yarrrml1, yarrrml2):
                 join = joinable(predicates1, predicates2, object1, object2)
 
             if object1 == object2 or join:
-                id_object = id_object+1
+                id_object = id_object + 1
+                id_subject = 0
                 triple_patterns = []
+
+                predicates1, subjects1 = get_triplets_of_object(yarrrml1, object1)
+                predicates2, subjects2 = get_triplets_of_object(yarrrml2, object2)
 
                 for i in range(len(predicates1)):
                     if predicates1[i] in predicates2:
                         source = 'M1 M2'
                     else:
                         source = 'M1'
-                    id_subject = id_subject+1
-                    if predicates1[i] == 'rdf:type' or predicates1[i] == 'a': # if the object is a type, we keep it for the pattern
-                        triple_patterns.append(['?S'+str(id_subject)+' '+str(predicates1[i])+' '+object1, source])
-                    else:
-                        triple_patterns.append(['?S'+str(id_subject)+' '+str(predicates1[i])+' ?O'+str(id_object), source])
+                    id_subject = id_subject + 1
+                    triple_patterns.append(['?S' + str(id_subject) + ' ' + str(predicates1[i]) + ' ?O' + str(id_object), source])
+
                 for i in range(len(predicates2)):
                     if predicates2[i] not in predicates1:
                         source = 'M2'
-                        id_subject = id_subject+1
-                        triple_patterns.append(['?S'+str(id_subject)+' '+str(predicates2[i])+' ?O'+str(id_object), source])
-                bgp.append(triple_patterns)
+                        id_subject = id_subject + 1
+                        triple_patterns.append(['?S' + str(id_subject) + ' ' + str(predicates2[i]) + ' ?O' + str(id_object), source])
 
     return bgp
 
@@ -196,7 +231,10 @@ def S2O_joinDetection(yarrrml1, yarrrml2):
 
             if subject == object or join:
                 id_template = id_template + 1
+                id_filler = 0
                 triple_patterns = []
+
+                predicates2, objects2 = get_triplets_of_object(yarrrml2, object)
 
                 for i in range(len(predicates1)):
                     if predicates1[i] in predicates2:
@@ -204,8 +242,7 @@ def S2O_joinDetection(yarrrml1, yarrrml2):
                     else:
                         source = 'M1'
                     id_filler = id_filler + 1
-                    if predicates1[i] == 'rdf:type' or predicates1[
-                        i] == 'a':  # if the object is a type, we keep it for the pattern
+                    if predicates1[i] == 'rdf:type' or predicates1[i] == 'a':  # if the object is a type, we keep it for the pattern
                         triple_patterns.append(
                             ['?T' + str(id_template) + ' ' + str(predicates1[i]) + ' ' + objects1[i], source])
                     else:
