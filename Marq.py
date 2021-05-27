@@ -207,13 +207,22 @@ def O2O_joinDetection(yarrrml1, yarrrml2):
                     else:
                         source = 'M1'
                     id_subject = id_subject + 1
-                    triple_patterns.append(['?S' + str(id_subject) + ' ' + str(predicates1[i]) + ' ?O' + str(id_object), source])
+
+                    if predicates1[i] == 'rdf:type' or predicates1[i] == 'a':  # if the object is a type, we keep it for the pattern
+                        triple_patterns.append(['?S' + str(id_subject) + ' ' + str(predicates1[i]) +' '+ object1, source])
+                    else:
+                        triple_patterns.append(['?S' + str(id_subject) + ' ' + str(predicates1[i]) + ' ?O'+ str(id_object), source])
 
                 for i in range(len(predicates2)):
                     if predicates2[i] not in predicates1:
                         source = 'M2'
                         id_subject = id_subject + 1
-                        triple_patterns.append(['?S' + str(id_subject) + ' ' + str(predicates2[i]) + ' ?O' + str(id_object), source])
+                        if predicates2[i] == 'rdf:type' or predicates2[i] == 'a':  # if the object is a type, we keep it for the pattern
+                            triple_patterns.append(
+                                ['?S' + str(id_subject) + ' ' + str(predicates2[i]) +' '+ object2, source])
+                        else:
+                            triple_patterns.append(
+                                ['?S' + str(id_subject) + ' ' + str(predicates2[i]) + ' ?O' + str(id_object), source])
 
                 test_bgp = test_bgp + 1
                 print(test_bgp, ': ', object1, ' et ', object2)
