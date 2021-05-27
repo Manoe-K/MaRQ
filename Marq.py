@@ -110,10 +110,12 @@ def joinable(predicates1, predicates2, objects1, objects2):
     #                    return True
     #return False
 
-
 # function described in the paper:
 # return the triple patterns created with Subject-Subject joins
 def S2S_joinDetection(yarrrml1, yarrrml2):
+
+    print('S2S')
+    test_bgp = 0
 
     bgp = []
     id_subject = 0
@@ -166,12 +168,17 @@ def S2S_joinDetection(yarrrml1, yarrrml2):
                             triple_patterns.append(
                                 ['?S' + str(id_subject) + ' ' + str(predicates2[i]) + ' ?O' + str(id_object), source])
 
+                test_bgp = test_bgp + 1
+                print(test_bgp, ': ', subject1, ' et ', subject2)
                 bgp.append(triple_patterns)
 
     return bgp
 
 
 def O2O_joinDetection(yarrrml1, yarrrml2):
+
+    print('O2O')
+    test_bgp = 0
 
     bgp = []
     id_object = 0
@@ -208,10 +215,18 @@ def O2O_joinDetection(yarrrml1, yarrrml2):
                         id_subject = id_subject + 1
                         triple_patterns.append(['?S' + str(id_subject) + ' ' + str(predicates2[i]) + ' ?O' + str(id_object), source])
 
+                test_bgp = test_bgp + 1
+                print(test_bgp, ': ', object1, ' et ', object2)
+                bgp.append(triple_patterns)
+
     return bgp
 
 
 def S2O_joinDetection(yarrrml1, yarrrml2):
+
+    print('S2O')
+    test_bgp = 0
+
     bgp = []
     id_template = 0
 
@@ -251,6 +266,9 @@ def S2O_joinDetection(yarrrml1, yarrrml2):
                         source = 'M2'
                     id_filler = id_filler + 1
                     triple_patterns.append(['?F' + str(id_filler) + ' ' + str(predicates2[i]) + ' ?T' + str(id_template), source])
+
+                test_bgp = test_bgp + 1
+                print(test_bgp, ': ', subject, ' et ', object)
                 bgp.append(triple_patterns)
 
     return bgp
