@@ -83,7 +83,7 @@ def get_triplets_of_object(yarrrml, object_to_search_with):
     for mapping_name, mapping in mappings.items():
         predicate_objects = get_keys(mapping, 'predicateobjects')
         for predicate, object in predicate_objects:
-            if object in names:     # If object is a reference, we use the subject it refers to
+            if object in names:     # If object is a reference to a subject, we use the subject it refers to
                 if object_to_search_with == mappings[object]['subject']:
                     predicates.append(predicate)
                     subjects.append(mapping['subject'])
@@ -117,7 +117,6 @@ def S2S_joinDetection(yarrrml1, yarrrml2):
 
     bgp = []
     id_subject = 0
-    id_object = 0
 
     for subject1 in get_subjects(yarrrml1):
         for subject2 in get_subjects(yarrrml2):
@@ -149,7 +148,6 @@ def S2S_joinDetection(yarrrml1, yarrrml2):
                     #test if the (predicate, object) pair wasn't already used from the other mapping
                     used_pair = False
                     for j in range(len(predicates1)):
-                        #print('here1:', predicates2[i], predicates1[j], objects2[i], predicates1[j])
                         #if we have a common predicate that don't refer to a type object
                         if predicates2[i] == predicates1[j] and not (predicates2[i] == 'a' or predicates2[i] == 'rdf:type'):
                             used_pair = True
@@ -176,7 +174,6 @@ def S2S_joinDetection(yarrrml1, yarrrml2):
 def O2O_joinDetection(yarrrml1, yarrrml2):
 
     bgp = []
-    id_subject = 0
     id_object = 0
 
     for object1 in get_objects(yarrrml1):
@@ -216,7 +213,6 @@ def O2O_joinDetection(yarrrml1, yarrrml2):
 
 def S2O_joinDetection(yarrrml1, yarrrml2):
     bgp = []
-    id_filler = 0
     id_template = 0
 
     for subject in get_subjects(yarrrml1):
