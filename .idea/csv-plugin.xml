@@ -17,6 +17,20 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\common_ontology.py">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\endpoint.py">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\newprog.py">
           <value>
             <Attribute>
