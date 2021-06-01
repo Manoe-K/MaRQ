@@ -24,9 +24,10 @@ for line in ontology_results.readlines():
 for join in l_type:
     for type in join:
         q = ('SELECT ?s WHERE {' 
-             'GRAPH ' + M1 + ' { ?s a ' + type + ' . }'
+             'GRAPH ' + M1 + ' { ?s a ' + type + ' . }.'
              'GRAPH ' + M2 + ' { ?s a ' + type + ' . }'
              '}'
              'LIMIT 1')
         print(q)
-        #answer = sparql.query('localhost', q)
+        answer = sparql.query('http://localhost:8890/conductor/sparql_input.vspx', q)
+        print(answer)
