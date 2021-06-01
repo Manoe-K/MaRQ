@@ -1,5 +1,4 @@
 import sys
-import re
 from yaml import load
 
 try:
@@ -115,8 +114,8 @@ def joinable(predicates1, predicates2, objects1, objects2):
 # return the triple patterns created with Subject-Subject joins
 def S2S_joinDetection(yarrrml1, yarrrml2):
 
-    #print('S2S')
-    #test_bgp = 0
+    print('S2S')
+    test_bgp = 0
 
     bgp = []
     id_subject = 0
@@ -134,15 +133,21 @@ def S2S_joinDetection(yarrrml1, yarrrml2):
 
                 for i in range(len(predicates1)):
                     if predicates1[i] in predicates2:
-                        source = 'M1 M2'
+                        if predicates1[i] == 'a' or predicates1[i] == 'rdf:thing':
+                            if objects1[i] in objects2:
+                                source = 'M1 M2'
+                            else:
+                                source = 'M1'
+                        else:
+                            source = 'M1 M2'
                     else:
                         source = 'M1'
-                    id_object = id_object+1
 
                     if predicates1[i] == 'rdf:type' or predicates1[i] == 'a':  # if the object is a type, we keep it for the pattern
                         triple_patterns.append(
                             ['?S' + str(id_subject) + ' ' + str(predicates1[i]) + ' ' + objects1[i], source])
                     else:
+                        id_object = id_object+1
                         triple_patterns.append(
                             ['?S' + str(id_subject) + ' ' + str(predicates1[i]) + ' ?O' + str(id_object), source])
 
@@ -160,17 +165,17 @@ def S2S_joinDetection(yarrrml1, yarrrml2):
 
                     if not used_pair:
                         source = 'M2'
-                        id_object = id_object+1
 
                         if predicates2[i] == 'rdf:type' or predicates2[i] == 'a':  # if the object is a type, we keep it for the pattern
                             triple_patterns.append(
                                 ['?S' + str(id_subject) + ' ' + str(predicates2[i]) + ' ' + objects2[i], source])
                         else:
+                            id_object = id_object+1
                             triple_patterns.append(
                                 ['?S' + str(id_subject) + ' ' + str(predicates2[i]) + ' ?O' + str(id_object), source])
 
-                #test_bgp = test_bgp + 1
-                #print(test_bgp, ': ', subject1, ' et ', subject2)
+                test_bgp = test_bgp + 1
+                print(test_bgp, ': ', subject1, ' et ', subject2)
 
                 bgp.append(triple_patterns)
 
@@ -180,8 +185,8 @@ def S2S_joinDetection(yarrrml1, yarrrml2):
 # return the triple patterns created with Object-Object joins
 def O2O_joinDetection(yarrrml1, yarrrml2):
 
-    #print('O2O')
-    #test_bgp = 0
+    print('O2O')
+    test_bgp = 0
 
     bgp = []
     id_object = 0
@@ -209,12 +214,14 @@ def O2O_joinDetection(yarrrml1, yarrrml2):
                         source = 'M1 M2'
                     else:
                         source = 'M1'
-                    id_subject = id_subject + 1
 
                     if predicates1[i] == 'rdf:type' or predicates1[i] == 'a':  # if the object is a type, we keep it for the pattern
-                        triple_patterns.append(['?S' + str(id_subject) + ' ' + str(predicates1[i]) + ' ' + object1, source])
+                        triple_patterns.append(
+                            ['?S' + str(id_subject) + ' ' + str(predicates1[i]) + ' ' + object1, source])
                     else:
-                        triple_patterns.append(['?S' + str(id_subject) + ' ' + str(predicates1[i]) + ' ?O' + str(id_object), source])
+                        id_subject = id_subject + 1
+                        triple_patterns.append(
+                            ['?S' + str(id_subject) + ' ' + str(predicates1[i]) + ' ?O' + str(id_object), source])
 
                 for i in range(len(predicates2)):
                     if predicates2[i] not in predicates1:
@@ -227,8 +234,8 @@ def O2O_joinDetection(yarrrml1, yarrrml2):
                             triple_patterns.append(
                                 ['?S' + str(id_subject) + ' ' + str(predicates2[i]) + ' ?O' + str(id_object), source])
 
-                #test_bgp = test_bgp + 1
-                #print(test_bgp, ': ', object1, ' et ', object2)
+                test_bgp = test_bgp + 1
+                print(test_bgp, ': ', object1, ' et ', object2)
 
                 bgp.append(triple_patterns)
 
@@ -239,8 +246,8 @@ def O2O_joinDetection(yarrrml1, yarrrml2):
 # reversed act as the mappings are inverted, changing the 'source' variable, thus allowing to do Object-Subject joins
 def S2O_joinDetection(yarrrml1, yarrrml2, reversed=False):
 
-    #print('S2O')
-    #test_bgp = 0
+    print('S2O')
+    test_bgp = 0
 
     bgp = []
     id_template = 0
@@ -253,7 +260,7 @@ def S2O_joinDetection(yarrrml1, yarrrml2, reversed=False):
 
             join = False
             if predicates1 and predicates2:
-                join = joinable(predicates1, predicates2, subject, object)
+                join = joinable(predicates1, predicates2, objects1, objects2)
 
             if subject == object or join:
                 id_template = id_template + 1
@@ -264,17 +271,27 @@ def S2O_joinDetection(yarrrml1, yarrrml2, reversed=False):
 
                 for i in range(len(predicates1)):
                     if predicates1[i] in predicates2:
-                        source = 'M1 M2'
+                        if predicates1[i] == 'a' or predicates1[i] == 'rdf:thing':
+                            if objects1[i] in objects2:
+                                source = 'M1 M2'
+                            else:
+                                if not reversed:
+                                    source = 'M1'
+                                else:
+                                    source = 'M2'
+                        else:
+                            source = 'M1 M2'
                     else:
                         if not reversed:
                             source = 'M1'
                         else:
                             source = 'M2'
-                    id_filler = id_filler + 1
+
                     if predicates1[i] == 'rdf:type' or predicates1[i] == 'a':  # if the object is a type, we keep it for the pattern
                         triple_patterns.append(
                             ['?T' + str(id_template) + ' ' + str(predicates1[i]) + ' ' + objects1[i], source])
                     else:
+                        id_filler = id_filler + 1
                         triple_patterns.append(
                             ['?T' + str(id_template) + ' ' + str(predicates1[i]) + ' ?F' + str(id_filler), source])
                 for i in range(len(predicates2)):
@@ -288,66 +305,60 @@ def S2O_joinDetection(yarrrml1, yarrrml2, reversed=False):
                     id_filler = id_filler + 1
                     triple_patterns.append(['?F' + str(id_filler) + ' ' + str(predicates2[i]) + ' ?T' + str(id_template), source])
 
-                #test_bgp = test_bgp + 1
-                #print(test_bgp, ': ', subject, ' et ', object)
+                test_bgp = test_bgp + 1
+                print(test_bgp, ': ', subject, ' et ', object)
 
                 bgp.append(triple_patterns)
 
     return bgp
 
 
-def compare(yarrrml1, yarrrml2):
+def compare_mappings(yarrrml1, yarrrml2):
     return {'subject-subject': S2S_joinDetection(yarrrml1, yarrrml2),
             'object-object':   O2O_joinDetection(yarrrml1, yarrrml2),
             'subject-object':  S2O_joinDetection(yarrrml1, yarrrml2),
             'object-subject':  S2O_joinDetection(yarrrml2, yarrrml1, reversed=True)}
 
 
-def print_result(results):
+def string_results(compare, name1, name2):
+
+    results = ''
     i = 1
-    #print()
-    print('S-S')
-    for bgp in results['subject-subject']:
-        #print()
-        print('bgp', i)
+
+    results += 'S-S\n'
+    for bgp in compare['subject-subject']:
+        results += 'bgp'+str(i)+'\n'
         i = i+1
         for queries in bgp:
-            print(queries)
-    #print()
-    #print()
-    print('O-O')
-    for bgp in results['object-object']:
-        #print()
-        print('bgp', i)
+            results += str(queries)+'\n'
+
+    results += 'O-O\n'
+    for bgp in compare['object-object']:
+        results += 'bgp'+str(i)+'\n'
         i = i+1
         for queries in bgp:
-            print(queries)
-    #print()
-    #print()
-    print('S-O')
-    for bgp in results['subject-object']:
-        #print()
-        print('bgp', i)
+            results += str(queries)+'\n'
+
+    results += 'S-O\n'
+    for bgp in compare['subject-object']:
+        results += 'bgp'+str(i)+'\n'
         i = i+1
         for queries in bgp:
-            print(queries)
-    #print()
-    #print()
-    print('O-S')
-    for bgp in results['object-subject']:
-        #print()
-        print('bgp', i)
+            results += str(queries)+'\n'
+
+    results += 'O-S\n'
+    for bgp in compare['object-subject']:
+        results += 'bgp'+str(i)+'\n'
         i = i+1
         for queries in bgp:
-            print(queries)
+            results += str(queries)+'\n'
+
+    return results
 
 
-# Main
+def compare(mapping1, mapping2, name1, name2):
 
-list_mappings = []
-for k in range(len(sys.argv[1:])):
-    yarrrml = sys.argv[1:][k]
-    list_mappings.append(load(open(yarrrml), Loader=Loader))
-    print('M'+str(k+1)+':', re.search(r'(\\[^\\]+?|/[^/]+?)$', yarrrml).group()[1:])
+    yarrrml1 = load(open(mapping1), Loader=Loader)
+    yarrrml2 = load(open(mapping2), Loader=Loader)
 
-print_result(compare(list_mappings[0], list_mappings[1]))
+    return string_results(compare_mappings(yarrrml1, yarrrml2), name1, name2)
