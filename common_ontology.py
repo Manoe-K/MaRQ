@@ -27,17 +27,17 @@ def get_common_ontologies(MaRQ_results):
     l_bgp.append(current_bgp)
     l_bgp.pop(0)
 
-
     # remove some ontologies that wont be of use
     # todo: candidat à supprimer:
     #  'http://purl.org/goodrelations/v1#Location'
-    classes_to_suppress = {'http://www.w3.org/2000/01/rdf-schema#Resource'}
+    classes_to_suppress = {'http://www.w3.org/2000/01/rdf-schema#Resource',
+                           'http://www.w3.org/2002/07/owl#Thing',
+                           'http://ontology.eil.utoronto.ca/icontact.owl#SchemaOrgThing'}
 
     for classes in l_bgp:
         for ontology in classes_to_suppress:
             if ontology in classes:
                 classes.remove(ontology)
-
 
     # initiate superclasses from the superclasses.txt file that store results
     superclasses = {}
