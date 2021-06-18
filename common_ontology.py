@@ -8,24 +8,18 @@ def get_common_ontologies(MaRQ_results):
 
     current_bgp = set()
     l_bgp = []
-    S2S = False
 
-    for line in MaRQ_results.splitlines():
-        if line == 'S-S':     # select the part that we wanna test
-            S2S = True
-        if line == 'O-O':
-            S2S = False
+    # read the results and create a list of sets of types, each set being the set of all type of one bgp
+    for bgp in MaRQ_results['subject-subject']['triple_patterns']:
+        current_bgp = set()
+        for pattern in bgp:
+            url = re.search("a http.*", pattern[0])
+            if url and pattern[1] == 'M1 M2':
+                current_bgp.add(url.group()[2:])
+        l_bgp.append(current_bgp)
 
-        if S2S:                 # select the lines that originate from both mappings and are type queries, remember the types
-            if line[0:3] == 'bgp':
-                l_bgp.append(current_bgp)
-                current_bgp = set()
-            if re.search(" a .*'M1 M2'.*", line):
-                url = re.search("http.*',", line)
-                current_bgp.add(url.group()[:-2])
-
-    l_bgp.append(current_bgp)
-    l_bgp.pop(0)
+    if current_bgp:
+        l_bgp.append(current_bgp)
 
     # remove some ontologies that wont be of use
     # todo: candidat à supprimer:

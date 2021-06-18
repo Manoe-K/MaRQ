@@ -5,7 +5,7 @@ mappings:
       - [a, 'https://schema.org/CreativeWork']
       - ['https://schema.org/reviewBody', $(comments)]
       - ['https://schema.org/reviewAspect', 'Accommodation review']
-      - ['https://schema.org/dateCreated', $(date)]               #third value: 'http://www.w3.org/2001/XMLSchema#date'
+      - ['https://schema.org/dateCreated', $(date), 'http://www.w3.org/2001/XMLSchema#date']
       - ['https://schema.org/author', Reviewer]
       - ['https://schema.org/itemReviewed', Home]
     source: dataset-source

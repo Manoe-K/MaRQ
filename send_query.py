@@ -21,13 +21,16 @@ for line in ontology_results.readlines():
             tempo.append(v[1:-1])
         l_type.append(tempo)
 
+already_done_queries = {}
 for join in l_type:
     for type in join:
-        q = ('SELECT ?s WHERE {' 
-             'GRAPH ' + M1 + ' { ?s a ' + type + ' . }.'
-             'GRAPH ' + M2 + ' { ?s a ' + type + ' . }'
-             '}'
-             'LIMIT 1')
-        print(q)
-        answer = sparql.query('http://localhost:8890/conductor/sparql_input.vspx', q)
-        print(answer)
+        if M1+M2+type not in already_done_queries:
+            q = ('SELECT ?s WHERE {' 
+                 'GRAPH ' + M1 + ' { ?s a ' + type + ' . }.'
+                 'GRAPH ' + M2 + ' { ?s a ' + type + ' . }'
+                 '}'
+                 'LIMIT 1')
+            answer = sparql.query('http://localhost:8890/conductor/sparql_input.vspx', q)
+            already_done_queries.add({'query': M1+M2+type, 'answer': answer})
+        else:
+            pass

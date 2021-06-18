@@ -46,11 +46,11 @@ def get_objects(yarrrml):
     objects = set()
     for mapping_name, mapping in mappings.items():
         predicate_objects = get_keys(mapping, 'predicateobjects')
-        for predicate, object in predicate_objects:
-            if object in names:     # If object is a reference, we use the subject it refers to
-                objects.add(mappings[object]['subject'])
+        for predicate_object in predicate_objects:
+            if predicate_object[1] in names:     # If object is a reference, we use the subject it refers to
+                objects.add(mappings[predicate_object[1]]['subject'])
             else:
-                objects.add(object)
+                objects.add(predicate_object[1])
 
     return objects
 
@@ -64,9 +64,9 @@ def get_triplets_of_subject(yarrrml, subject_to_search_with):
     for mapping_name, mapping in mappings.items():
         if subject_to_search_with == mappings[mapping_name]['subject']:
             predicate_objects = get_keys(mapping, 'predicateobjects')
-            for predicate, object in predicate_objects:
-                predicates.append(predicate)
-                objects.append(object)
+            for predicate_object in predicate_objects:
+                predicates.append(predicate_object[0])
+                objects.append(predicate_object[1])
     return predicates, objects
 
 
@@ -82,14 +82,14 @@ def get_triplets_of_object(yarrrml, object_to_search_with):
     subjects = []
     for mapping_name, mapping in mappings.items():
         predicate_objects = get_keys(mapping, 'predicateobjects')
-        for predicate, object in predicate_objects:
-            if object in names:     # If object is a reference to a subject, we use the subject it refers to
-                if object_to_search_with == mappings[object]['subject']:
-                    predicates.append(predicate)
+        for predicate_object in predicate_objects:
+            if predicate_object[1] in names:     # If object is a reference to a subject, we use the subject it refers to
+                if object_to_search_with == mappings[predicate_object[1]]['subject']:
+                    predicates.append(predicate_object[0])
                     subjects.append(mapping['subject'])
             else:
-                if object_to_search_with == object:
-                    predicates.append(predicate)
+                if object_to_search_with == predicate_object[1]:
+                    predicates.append(predicate_object[0])
                     subjects.append(mapping['subject'])
     return predicates, subjects
 
@@ -118,6 +118,10 @@ def S2S_joinDetection(yarrrml1, yarrrml2):
     #test_bgp = 0
 
     bgp = []
+    list_tp_per_template_count = []
+    tp_M1_count = 0
+    tp_M2_count = 0
+
     id_subject = 0
 
     for subject1 in get_subjects(yarrrml1):
@@ -130,6 +134,7 @@ def S2S_joinDetection(yarrrml1, yarrrml2):
                 id_subject = id_subject + 1
                 id_object = 0
                 triple_patterns = []
+                tp_per_template_count = 0
 
                 for i in range(len(predicates1)):
                     if predicates1[i] in predicates2:
@@ -138,10 +143,14 @@ def S2S_joinDetection(yarrrml1, yarrrml2):
                                 source = 'M1 M2'
                             else:
                                 source = 'M1'
+                                tp_M1_count += 1
                         else:
                             source = 'M1 M2'
                     else:
                         source = 'M1'
+                        tp_M1_count += 1
+
+                    tp_per_template_count += 1
 
                     if predicates1[i] == 'rdf:type' or predicates1[i] == 'a':  # if the object is a type, we keep it for the pattern
                         triple_patterns.append(
@@ -165,6 +174,9 @@ def S2S_joinDetection(yarrrml1, yarrrml2):
 
                     if not used_pair:
                         source = 'M2'
+                        tp_M2_count += 1
+
+                        tp_per_template_count += 1
 
                         if predicates2[i] == 'rdf:type' or predicates2[i] == 'a':  # if the object is a type, we keep it for the pattern
                             triple_patterns.append(
@@ -176,10 +188,13 @@ def S2S_joinDetection(yarrrml1, yarrrml2):
 
                 #test_bgp = test_bgp + 1
                 #print(test_bgp, ': ', subject1, ' et ', subject2)
-
+                list_tp_per_template_count.append(tp_per_template_count)
                 bgp.append(triple_patterns)
 
-    return bgp
+    return {'triple_patterns': bgp,
+            'Number_of_triple_patterns': list_tp_per_template_count,
+            'Number_of_triple_patterns_from_M1': tp_M1_count,
+            'Number_of_triple_patterns_from_M2': tp_M2_count}
 
 
 # return the triple patterns created with Object-Object joins
@@ -189,6 +204,10 @@ def O2O_joinDetection(yarrrml1, yarrrml2):
     #test_bgp = 0
 
     bgp = []
+    list_tp_per_template_count = []
+    tp_M1_count = 0
+    tp_M2_count = 0
+
     id_object = 0
 
     for object1 in get_objects(yarrrml1):
@@ -205,6 +224,7 @@ def O2O_joinDetection(yarrrml1, yarrrml2):
                 id_object = id_object + 1
                 id_subject = 0
                 triple_patterns = []
+                tp_per_template_count = 0
 
                 predicates1, subjects1 = get_triplets_of_object(yarrrml1, object1)
                 predicates2, subjects2 = get_triplets_of_object(yarrrml2, object2)
@@ -214,32 +234,43 @@ def O2O_joinDetection(yarrrml1, yarrrml2):
                         source = 'M1 M2'
                     else:
                         source = 'M1'
+                        tp_M1_count += 1
+
+                    tp_per_template_count += 1
+                    id_subject = id_subject + 1
 
                     if predicates1[i] == 'rdf:type' or predicates1[i] == 'a':  # if the object is a type, we keep it for the pattern
                         triple_patterns.append(
-                            ['?S' + str(id_subject) + ' ' + str(predicates1[i]) + ' ' + object1, source])
+                           ['?S' + str(id_subject) + ' ' + str(predicates1[i]) + ' ' + object1, source])
                     else:
-                        id_subject = id_subject + 1
                         triple_patterns.append(
                             ['?S' + str(id_subject) + ' ' + str(predicates1[i]) + ' ?O' + str(id_object), source])
 
                 for i in range(len(predicates2)):
                     if predicates2[i] not in predicates1:
                         source = 'M2'
+                        tp_M2_count += 1
+
+                        tp_per_template_count += 1
                         id_subject = id_subject + 1
+
                         if predicates2[i] == 'rdf:type' or predicates2[i] == 'a':  # if the object is a type, we keep it for the pattern
-                            triple_patterns.append(
-                                ['?S' + str(id_subject) + ' ' + str(predicates2[i]) + ' ' + object2, source])
+                            pass
+                            #triple_patterns.append(
+                            #    ['?S' + str(id_subject) + ' ' + str(predicates2[i]) + ' ' + object2, source])
                         else:
                             triple_patterns.append(
                                 ['?S' + str(id_subject) + ' ' + str(predicates2[i]) + ' ?O' + str(id_object), source])
 
                 #test_bgp = test_bgp + 1
                 #print(test_bgp, ': ', object1, ' et ', object2)
-
+                list_tp_per_template_count.append(tp_per_template_count)
                 bgp.append(triple_patterns)
 
-    return bgp
+    return {'triple_patterns': bgp,
+            'Number_of_triple_patterns': list_tp_per_template_count,
+            'Number_of_triple_patterns_from_M1': tp_M1_count,
+            'Number_of_triple_patterns_from_M2': tp_M2_count}
 
 
 # return the triple patterns created with Subject-Object joins
@@ -250,6 +281,10 @@ def S2O_joinDetection(yarrrml1, yarrrml2, reversed=False):
     #test_bgp = 0
 
     bgp = []
+    list_tp_per_template_count = []
+    tp_M1_count = 0
+    tp_M2_count = 0
+
     id_template = 0
 
     for subject in get_subjects(yarrrml1):
@@ -266,6 +301,7 @@ def S2O_joinDetection(yarrrml1, yarrrml2, reversed=False):
                 id_template = id_template + 1
                 id_filler = 0
                 triple_patterns = []
+                tp_per_template_count = 0
 
                 predicates2, objects2 = get_triplets_of_object(yarrrml2, object)
 
@@ -277,15 +313,21 @@ def S2O_joinDetection(yarrrml1, yarrrml2, reversed=False):
                             else:
                                 if not reversed:
                                     source = 'M1'
+                                    tp_M1_count += 1
                                 else:
                                     source = 'M2'
+                                    tp_M2_count += 1
                         else:
                             source = 'M1 M2'
                     else:
                         if not reversed:
                             source = 'M1'
+                            tp_M1_count += 1
                         else:
                             source = 'M2'
+                            tp_M2_count += 1
+
+                    tp_per_template_count += 1
 
                     if predicates1[i] == 'rdf:type' or predicates1[i] == 'a':  # if the object is a type, we keep it for the pattern
                         triple_patterns.append(
@@ -294,23 +336,32 @@ def S2O_joinDetection(yarrrml1, yarrrml2, reversed=False):
                         id_filler = id_filler + 1
                         triple_patterns.append(
                             ['?T' + str(id_template) + ' ' + str(predicates1[i]) + ' ?F' + str(id_filler), source])
+
                 for i in range(len(predicates2)):
                     if predicates2[i] in predicates1:
                         source = 'M1 M2'
                     else:
                         if not reversed:
                             source = 'M2'
+                            tp_M2_count += 1
                         else:
                             source = 'M1'
+                            tp_M1_count += 1
+
+                    tp_per_template_count += 1
                     id_filler = id_filler + 1
+
                     triple_patterns.append(['?F' + str(id_filler) + ' ' + str(predicates2[i]) + ' ?T' + str(id_template), source])
 
                 #test_bgp = test_bgp + 1
                 #print(test_bgp, ': ', subject, ' et ', object)
-
+                list_tp_per_template_count.append(tp_per_template_count)
                 bgp.append(triple_patterns)
 
-    return bgp
+    return {'triple_patterns': bgp,
+            'Number_of_triple_patterns': list_tp_per_template_count,
+            'Number_of_triple_patterns_from_M1': tp_M1_count,
+            'Number_of_triple_patterns_from_M2': tp_M2_count}
 
 
 def compare_mappings(yarrrml1, yarrrml2):
@@ -320,45 +371,86 @@ def compare_mappings(yarrrml1, yarrrml2):
             'object-subject':  S2O_joinDetection(yarrrml2, yarrrml1, reversed=True)}
 
 
-def string_results(compare, name1, name2):
-
-    results = ''
-    i = 1
-
-    results += 'S-S\n'
-    for bgp in compare['subject-subject']:
-        results += 'bgp'+str(i)+'\n'
-        i = i+1
-        for queries in bgp:
-            results += str(queries)+'\n'
-
-    results += 'O-O\n'
-    for bgp in compare['object-object']:
-        results += 'bgp'+str(i)+'\n'
-        i = i+1
-        for queries in bgp:
-            results += str(queries)+'\n'
-
-    results += 'S-O\n'
-    for bgp in compare['subject-object']:
-        results += 'bgp'+str(i)+'\n'
-        i = i+1
-        for queries in bgp:
-            results += str(queries)+'\n'
-
-    results += 'O-S\n'
-    for bgp in compare['object-subject']:
-        results += 'bgp'+str(i)+'\n'
-        i = i+1
-        for queries in bgp:
-            results += str(queries)+'\n'
-
-    return results
-
-
-def compare(mapping1, mapping2, name1, name2):
+def compare(mapping1, mapping2):
 
     yarrrml1 = load(open(mapping1), Loader=Loader)
     yarrrml2 = load(open(mapping2), Loader=Loader)
 
-    return string_results(compare_mappings(yarrrml1, yarrrml2), name1, name2)
+    return compare_mappings(yarrrml1, yarrrml2)
+
+
+#sortie adaptée à l'appli web
+def get_results(yarrrml_mappings, mapping_names):
+
+    results = {
+        'data': [],
+        'queries': []
+    }
+
+    for it1 in range(0, len(yarrrml_mappings)):
+        for it2 in range(0, len(yarrrml_mappings)):
+            if it1 != it2:
+
+                compared = compare_mappings(yarrrml_mappings[it1], yarrrml_mappings[it2])
+
+                results['data'].append({
+                    'Source': mapping_names[it1],
+                    'Destination': mapping_names[it2],
+                    'Score': 0,
+                    'Join_subject_subject': {
+                        'Number_of_triple_pattern': compared['subject-subject']['Number_of_triple_patterns'],
+                        'Number_of_triple_pattern_from_M1': compared['subject-subject']['Number_of_triple_patterns_from_M1'],
+                        'Number_of_triple_pattern_from_M2': compared['subject-subject']['Number_of_triple_patterns_from_M2']
+                    },
+                    'Join_object_object': {
+                        'Number_of_triple_pattern': compared['object-object']['Number_of_triple_patterns'],
+                        'Number_of_triple_pattern_from_M1': compared['object-object']['Number_of_triple_patterns_from_M1'],
+                        'Number_of_triple_pattern_from_M2': compared['object-object']['Number_of_triple_patterns_from_M2']
+                    },
+                    'Join_subject_object': {
+                        'Number_of_triple_pattern': compared['subject-object']['Number_of_triple_patterns'],
+                        'Number_of_triple_pattern_from_M1': compared['subject-object']['Number_of_triple_patterns_from_M1'],
+                        'Number_of_triple_pattern_from_M2': compared['subject-object']['Number_of_triple_patterns_from_M2']
+                    }
+                })
+
+                for i in range(len(compared['subject-subject']['triple_patterns'])):
+                    query = 'SELECT *\nWHERE {\n'
+                    for y in compared['subject-subject']['triple_patterns'][i]:
+                        query += f' {y[0]}.'
+                        if y[1] == "M1 M2":
+                            query += f'\t# {mapping_names[it1]} and {mapping_names[it2]}\n'
+                        if y[1] == "M1":
+                            query += f'\t# {mapping_names[it1]}\n'
+                        if y[1] == "M2":
+                            query += f'\t# {mapping_names[it2]}\n'
+                    query += '}'
+                    results['queries'].append(query)
+
+                for i in range(len(compared['object-object']['triple_patterns'])):
+                    query = 'SELECT *\nWHERE {\n'
+                    for y in compared['object-object']['triple_patterns'][i]:
+                        query += f' {y[0]}.'
+                        if y[1] == "M1 M2":
+                            query += f'\t# {mapping_names[it1]} and {mapping_names[it2]}\n'
+                        if y[1] == "M1":
+                            query += f'\t# {mapping_names[it1]}\n'
+                        if y[1] == "M2":
+                            query += f'\t# {mapping_names[it2]}\n'
+                    query += '}'
+                    results['queries'].append(query)
+
+                for i in range(len(compared['subject-object']['triple_patterns'])):
+                    query = 'SELECT *\nWHERE {\n'
+                    for y in compared['subject-object']['triple_patterns'][i]:
+                        query += f' {y[0]}.'
+                        if y[1] == "M1 M2":
+                            query += f'\t# {mapping_names[it1]} and {mapping_names[it2]}\n'
+                        if y[1] == "M1":
+                            query += f'\t# {mapping_names[it1]}\n'
+                        if y[1] == "M2":
+                            query += f'\t# {mapping_names[it2]}\n'
+                    query += '}'
+                    results['queries'].append(query)
+
+    return results
