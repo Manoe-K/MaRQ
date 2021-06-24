@@ -38,6 +38,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\create_queries.py">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\endpoint.py">
           <value>
             <Attribute>
@@ -46,6 +53,13 @@
           </value>
         </entry>
         <entry key="\newprog.py">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\result_queries.txt">
           <value>
             <Attribute>
               <option name="separator" value=":" />

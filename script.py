@@ -4,7 +4,7 @@ import re
 
 import MaRQ
 import common_ontology as CO
-#import send_query as sd
+import create_queries as cq
 
 
 if len(sys.argv[1:]) > 1:               # read the script's arguments, each one being a mapping path
@@ -22,6 +22,7 @@ elif len(sys.argv[1:]) == 1:            # read the script's argument, being the 
     mappings_directory = os.listdir(sys.argv[1])
     for mapping in mappings_directory:
         l_names.append(mapping)
+        print(mapping)
         l_mapping.append(sys.argv[1] + '/' + mapping)
 
 
@@ -36,12 +37,12 @@ for i in range(len(l_mapping)):
 
 
 # Calculate the minimal common subject of each pair of mappings, for each of there s2s joins
-co = []
+common_types = []
 for pair in MaRQ_results:
-    co.append(CO.get_common_ontologies(pair['result']))
+    common_types.append(CO.get_common_ontologies(pair['result']))
 
-
-
+for i in range(len(MaRQ_results)):
+    print(cq.create_queries(MaRQ_results[i], common_types[i]))
 
 
 """

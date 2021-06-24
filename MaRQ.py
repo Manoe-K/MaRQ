@@ -154,11 +154,17 @@ def S2S_joinDetection(yarrrml1, yarrrml2):
 
                     if predicates1[i] == 'rdf:type' or predicates1[i] == 'a':  # if the object is a type, we keep it for the pattern
                         triple_patterns.append(
-                            ['?S' + str(id_subject) + ' ' + str(predicates1[i]) + ' ' + objects1[i], source])
+                            {'subject':    '?S' + str(id_subject),
+                             'predicate':   str(predicates1[i]),
+                             'object':     objects1[i],
+                             'source':     source})
                     else:
                         id_object = id_object+1
                         triple_patterns.append(
-                            ['?S' + str(id_subject) + ' ' + str(predicates1[i]) + ' ?O' + str(id_object), source])
+                            {'subject':    '?S' + str(id_subject),
+                             'predicate':   str(predicates1[i]),
+                             'object':     '?O' + str(id_object),
+                             'source':     source})
 
                 for i in range(len(predicates2)):
 
@@ -180,11 +186,17 @@ def S2S_joinDetection(yarrrml1, yarrrml2):
 
                         if predicates2[i] == 'rdf:type' or predicates2[i] == 'a':  # if the object is a type, we keep it for the pattern
                             triple_patterns.append(
-                                ['?S' + str(id_subject) + ' ' + str(predicates2[i]) + ' ' + objects2[i], source])
+                                {'subject':    '?S' + str(id_subject),
+                                 'predicate':   str(predicates2[i]),
+                                 'object':     objects2[i],
+                                 'source':     source})
                         else:
                             id_object = id_object+1
                             triple_patterns.append(
-                                ['?S' + str(id_subject) + ' ' + str(predicates2[i]) + ' ?O' + str(id_object), source])
+                                {'subject':    '?S' + str(id_subject),
+                                 'predicate':   str(predicates2[i]),
+                                 'object':     '?O' + str(id_object),
+                                 'source':     source})
 
                 #test_bgp = test_bgp + 1
                 #print(test_bgp, ': ', subject1, ' et ', subject2)
@@ -236,15 +248,34 @@ def O2O_joinDetection(yarrrml1, yarrrml2):
                         source = 'M1'
                         tp_M1_count += 1
 
-                    tp_per_template_count += 1
-                    id_subject = id_subject + 1
+                    # test if the triplet pattern isn't already in the list
+                    already_in = False
+                    k = 0
+                    while k < len(triple_patterns) and not already_in:
+                        if predicates1[i] == triple_patterns[k]['predicate']:
+                            if predicates1[i] == 'rdf:type' or predicates1[i] == 'a':
+                                if object1 == triple_patterns[k]['object']:
+                                    already_in = True
+                            else:
+                                already_in = True
+                        k += 1
 
-                    if predicates1[i] == 'rdf:type' or predicates1[i] == 'a':  # if the object is a type, we keep it for the pattern
-                        triple_patterns.append(
-                           ['?S' + str(id_subject) + ' ' + str(predicates1[i]) + ' ' + object1, source])
-                    else:
-                        triple_patterns.append(
-                            ['?S' + str(id_subject) + ' ' + str(predicates1[i]) + ' ?O' + str(id_object), source])
+                    if not already_in:
+                        tp_per_template_count += 1
+                        id_subject = id_subject + 1
+
+                        if predicates1[i] == 'rdf:type' or predicates1[i] == 'a':  # if the object is a type, we keep it for the pattern
+                            triple_patterns.append(
+                                {'subject':    '?S' + str(id_subject),
+                                 'predicate':   str(predicates1[i]),
+                                 'object':     object1,
+                                 'source':     source})
+                        else:
+                            triple_patterns.append(
+                                {'subject':    '?S' + str(id_subject),
+                                 'predicate':   str(predicates1[i]),
+                                 'object':     '?O' + str(id_object),
+                                 'source':     source})
 
                 for i in range(len(predicates2)):
                     if predicates2[i] not in predicates1:
@@ -256,11 +287,17 @@ def O2O_joinDetection(yarrrml1, yarrrml2):
 
                         if predicates2[i] == 'rdf:type' or predicates2[i] == 'a':  # if the object is a type, we keep it for the pattern
                             pass
-                            #triple_patterns.append(
-                            #    ['?S' + str(id_subject) + ' ' + str(predicates2[i]) + ' ' + object2, source])
+                            """triple_patterns.append(
+                                {'subject':    '?S' + str(id_subject),
+                                 'predicate':   str(predicates2[i]),
+                                 'object':     object2,
+                                 'source':     source})"""
                         else:
                             triple_patterns.append(
-                                ['?S' + str(id_subject) + ' ' + str(predicates2[i]) + ' ?O' + str(id_object), source])
+                                {'subject':    '?S' + str(id_subject),
+                                 'predicate':   str(predicates2[i]),
+                                 'object':     '?O' + str(id_object),
+                                 'source':     source})
 
                 #test_bgp = test_bgp + 1
                 #print(test_bgp, ': ', object1, ' et ', object2)
@@ -331,11 +368,17 @@ def S2O_joinDetection(yarrrml1, yarrrml2, reversed=False):
 
                     if predicates1[i] == 'rdf:type' or predicates1[i] == 'a':  # if the object is a type, we keep it for the pattern
                         triple_patterns.append(
-                            ['?T' + str(id_template) + ' ' + str(predicates1[i]) + ' ' + objects1[i], source])
+                            {'subject':    '?T' + str(id_template),
+                             'predicate':   str(predicates1[i]),
+                             'object':     objects1[i],
+                             'source':     source})
                     else:
                         id_filler = id_filler + 1
                         triple_patterns.append(
-                            ['?T' + str(id_template) + ' ' + str(predicates1[i]) + ' ?F' + str(id_filler), source])
+                            {'subject':    '?T' + str(id_template),
+                             'predicate':   str(predicates1[i]),
+                             'object':     '?F' + str(id_filler),
+                             'source':     source})
 
                 for i in range(len(predicates2)):
                     if predicates2[i] in predicates1:
@@ -351,7 +394,11 @@ def S2O_joinDetection(yarrrml1, yarrrml2, reversed=False):
                     tp_per_template_count += 1
                     id_filler = id_filler + 1
 
-                    triple_patterns.append(['?F' + str(id_filler) + ' ' + str(predicates2[i]) + ' ?T' + str(id_template), source])
+                    triple_patterns.append(
+                        {'subject':    '?F' + str(id_filler),
+                         'predicate':   str(predicates2[i]),
+                         'object':     '?T' + str(id_template),
+                         'source':     source})
 
                 #test_bgp = test_bgp + 1
                 #print(test_bgp, ': ', subject, ' et ', object)
@@ -415,42 +462,48 @@ def get_results(yarrrml_mappings, mapping_names):
                 })
 
                 for i in range(len(compared['subject-subject']['triple_patterns'])):
-                    query = 'SELECT *\nWHERE {\n'
-                    for y in compared['subject-subject']['triple_patterns'][i]:
-                        query += f' {y[0]}.'
-                        if y[1] == "M1 M2":
-                            query += f'\t# {mapping_names[it1]} and {mapping_names[it2]}\n'
-                        if y[1] == "M1":
-                            query += f'\t# {mapping_names[it1]}\n'
-                        if y[1] == "M2":
-                            query += f'\t# {mapping_names[it2]}\n'
+                    query = '#subject-subject\n'
+                    query += f'#M1: {mapping_names[it1]}\n'
+                    query += f'#M2: {mapping_names[it2]}\n'
+                    query += 'SELECT *\nWHERE {\n'
+
+                    for pattern in compared['subject-subject']['triple_patterns'][i]:
+                        query += triple_pattern_to_sparql(pattern) + '\n'
+
                     query += '}'
                     results['queries'].append(query)
 
                 for i in range(len(compared['object-object']['triple_patterns'])):
-                    query = 'SELECT *\nWHERE {\n'
-                    for y in compared['object-object']['triple_patterns'][i]:
-                        query += f' {y[0]}.'
-                        if y[1] == "M1 M2":
-                            query += f'\t# {mapping_names[it1]} and {mapping_names[it2]}\n'
-                        if y[1] == "M1":
-                            query += f'\t# {mapping_names[it1]}\n'
-                        if y[1] == "M2":
-                            query += f'\t# {mapping_names[it2]}\n'
+                    query = '#object-object\n'
+                    query += f'#M1: {mapping_names[it1]}\n'
+                    query += f'#M2: {mapping_names[it2]}\n'
+                    query += 'SELECT *\nWHERE {\n'
+
+                    for pattern in compared['object-object']['triple_patterns'][i]:
+                        query += triple_pattern_to_sparql(pattern) + '\n'
+
                     query += '}'
                     results['queries'].append(query)
 
                 for i in range(len(compared['subject-object']['triple_patterns'])):
-                    query = 'SELECT *\nWHERE {\n'
-                    for y in compared['subject-object']['triple_patterns'][i]:
-                        query += f' {y[0]}.'
-                        if y[1] == "M1 M2":
-                            query += f'\t# {mapping_names[it1]} and {mapping_names[it2]}\n'
-                        if y[1] == "M1":
-                            query += f'\t# {mapping_names[it1]}\n'
-                        if y[1] == "M2":
-                            query += f'\t# {mapping_names[it2]}\n'
+                    query = '#subject-object\n'
+                    query += f'#M1: {mapping_names[it1]}\n'
+                    query += f'#M2: {mapping_names[it2]}\n'
+                    query += 'SELECT *\nWHERE {\n'
+
+                    for pattern in compared['subject-object']['triple_patterns'][i]:
+                        query += triple_pattern_to_sparql(pattern) + '\n'
+
                     query += '}'
                     results['queries'].append(query)
 
     return results
+
+
+def triple_pattern_to_sparql(pattern):
+    if pattern['predicate'] == 'a':
+        return pattern['subject'] + ' ' + pattern['predicate'] + ' <' + pattern['object'] + '>' + '.\t#' + pattern['source']
+    elif pattern['predicate'] == 'rdf:type':
+        return pattern['subject'] + ' ' + pattern['predicate'] + ' <' + pattern['object'] + '>' + '.\t#' + pattern['source']
+    else:
+        return pattern['subject'] + ' <' + pattern['predicate'] + '> ' + pattern['object'] + '.\t#' + pattern['source']

@@ -1,5 +1,4 @@
 import sparql
-import re
 import sys
 
 
@@ -13,9 +12,9 @@ def get_common_ontologies(MaRQ_results):
     for bgp in MaRQ_results['subject-subject']['triple_patterns']:
         current_bgp = set()
         for pattern in bgp:
-            url = re.search("a http.*", pattern[0])
-            if url and pattern[1] == 'M1 M2':
-                current_bgp.add(url.group()[2:])
+            if pattern['property'] == 'a' or pattern['property'] == 'rdf:type':
+                if pattern['source'] == 'M1 M2':
+                    current_bgp.add(pattern['object'])
         l_bgp.append(current_bgp)
 
     if current_bgp:
