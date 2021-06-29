@@ -97,18 +97,20 @@ def get_triplets_of_object(yarrrml, object_to_search_with):
 # attention la saturation crée trop de faux positif (car thing == thing)
 # TODO: à changer: Ne test que le premier objet car les mappings sont saturés (temporaire)
 def joinable(predicates1, predicates2, objects1, objects2):
-    if predicates1[0] == 'a' or predicates1[0] == 'rdf:type':
-        if predicates2[0] == 'a' or predicates2[0] == 'rdf:type':
-            if objects1[0] == objects2[0]:
-                return True
-    return False
-    #for i in range(len(predicates1)):
-    #   if predicates1[i] == 'a' or predicates1[i] == 'rdf:type':
-    #       for j in range(len(predicates2)):
-    #           if predicates2[j] == 'a' or predicates1[j] == 'rdf:type':
-    #               if objects1[i] == objects2[j]:
-    #                    return True
-    #return False
+
+    set1 = set()
+    set2 = set()
+
+    for i in range(len(objects1)):
+        if predicates1[i] == 'a' or predicates1[i] == 'rdf:type':
+            set1.add(objects1[i])
+    for i in range(len(objects2)):
+        if predicates2[i] == 'a' or predicates2[i] == 'rdf:type':
+            set2.add(objects2[i])
+
+    Jaccard = len(set1.intersection(set2))/len(set1.union(set2))
+
+    return Jaccard > 0
 
 
 # return the triple patterns created with Subject-Subject joins
@@ -230,7 +232,7 @@ def O2O_joinDetection(yarrrml1, yarrrml2):
 
             join = False
             if predicates1 and predicates2:
-                join = joinable(predicates1, predicates2, object1, object2)
+                join = joinable(predicates1, predicates2, objects1, objects2)
 
             if object1 == object2 or join:
                 id_object = id_object + 1
