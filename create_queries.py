@@ -23,7 +23,7 @@ def create_queries(pair, common_type):
         pruned_results = []
 
         for triple_pattern in pair['result']['subject-subject']['triple_patterns'][i]:
-            if triple_pattern['property'] == 'a' or triple_pattern['property'] == 'rdf:type':
+            if triple_pattern['predicate'] == 'a' or triple_pattern['predicate'] == 'rdf:type':
                 if triple_pattern['object'] in common_type[i]:
                     pruned_results.append(triple_pattern)
             else:
@@ -45,7 +45,7 @@ def create_queries(pair, common_type):
             if pattern['source'] == 'M1':
                 bgp_M1.append(
                     {'subject':     pattern['subject'],
-                     'property':   pattern['property'],
+                     'predicate':   pattern['predicate'],
                      'object':      pattern['object'],
                      'source':      'M1'})
                 max_length += 1
@@ -53,7 +53,7 @@ def create_queries(pair, common_type):
             elif pattern['source'] == 'M2':
                 bgp_M2.append(
                     {'subject': pattern['subject'],
-                     'property': pattern['property'],
+                     'predicate': pattern['predicate'],
                      'object': pattern['object'],
                      'source': 'M2'})
                 max_length += 1
@@ -61,12 +61,12 @@ def create_queries(pair, common_type):
             elif pattern['source'] == 'M1 M2':
                 bgp_M1.append(
                     {'subject': pattern['subject'],
-                     'property': pattern['property'],
+                     'predicate': pattern['predicate'],
                      'object': pattern['object'],
                      'source': 'M1 M2'})
                 bgp_M2.append(
                     {'subject': pattern['subject'],
-                     'property': pattern['property'],
+                     'predicate': pattern['predicate'],
                      'object': pattern['object'],
                      'source': 'M1 M2'})
                 max_length += 2
@@ -103,8 +103,8 @@ def create_queries(pair, common_type):
 
 
 def triple_pattern_to_sparql(pattern):
-    if pattern['property'] == 'a' or pattern['property'] == 'rdf:type':
-        return pattern['subject'] + ' ' + pattern['property'] + ' <' + pattern['object'] + '>' + '.\t#' + pattern['source']
+    if pattern['predicate'] == 'a' or pattern['predicate'] == 'rdf:type':
+        return pattern['subject'] + ' ' + pattern['predicate'] + ' <' + pattern['object'] + '>' + '.\t#' + pattern['source']
     else:
-        return pattern['subject'] + ' <' + pattern['property'] + '> ' + pattern['object'] + '.\t#' + pattern['source']
+        return pattern['subject'] + ' <' + pattern['predicate'] + '> ' + pattern['object'] + '.\t#' + pattern['source']
 

@@ -35,7 +35,7 @@ for i in range(len(l_mapping)):
             'name2': l_names[j],
             'result': MaRQ.compare(l_mapping[i], l_mapping[j])})    # Create queries out of possible joins
 
-
+"""
 # Calculate the minimal common subject of each pair of mappings, for each of there s2s joins
 common_types = []
 for pair in MaRQ_results:
@@ -43,7 +43,7 @@ for pair in MaRQ_results:
 
 for i in range(len(MaRQ_results)):
     print(cq.create_queries(MaRQ_results[i], common_types[i]))
-
+"""
 
 """
 # Print the results

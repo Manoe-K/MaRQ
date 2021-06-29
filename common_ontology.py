@@ -12,7 +12,7 @@ def get_common_ontologies(MaRQ_results):
     for bgp in MaRQ_results['subject-subject']['triple_patterns']:
         current_bgp = set()
         for pattern in bgp:
-            if pattern['property'] == 'a' or pattern['property'] == 'rdf:type':
+            if pattern['predicate'] == 'a' or pattern['predicate'] == 'rdf:type':
                 if pattern['source'] == 'M1 M2':
                     current_bgp.add(pattern['object'])
         l_bgp.append(current_bgp)
