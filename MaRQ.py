@@ -438,7 +438,7 @@ def compare(mapping1, mapping2):
     return compare_mappings(yarrrml1, yarrrml2)
 
 
-#sortie adaptée à l'appli web
+# web output
 def get_results(yarrrml_mappings, mapping_names):
 
     results = {
