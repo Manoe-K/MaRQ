@@ -95,11 +95,12 @@ def get_triplets_of_object(yarrrml, object_to_search_with):
 
 
 # attention la saturation crée trop de faux positif (car thing == thing)
-# TODO: à changer: Ne test que le premier objet car les mappings sont saturés (temporaire)
 def joinable(predicates1, predicates2, objects1, objects2):
 
     set1 = set()
     set2 = set()
+
+    print()
 
     for i in range(len(objects1)):
         if predicates1[i] == 'a' or predicates1[i] == 'rdf:type':
@@ -108,7 +109,17 @@ def joinable(predicates1, predicates2, objects1, objects2):
         if predicates2[i] == 'a' or predicates2[i] == 'rdf:type':
             set2.add(objects2[i])
 
+    print('set1')
+    print(set1)
+    print('set2')
+    print(set2)
+    print('set1 n set2')
+    print(set1.intersection(set2))
+
     Jaccard = len(set1.intersection(set2))/len(set1.union(set2))
+
+    print('Jaccard')
+    print(Jaccard)
 
     return Jaccard > 0
 
