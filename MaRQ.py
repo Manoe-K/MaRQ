@@ -94,7 +94,7 @@ def get_triplets_of_object(yarrrml, object_to_search_with):
     return predicates, subjects
 
 
-# attention la saturation crée trop de faux positif (car thing == thing)
+# attention la saturation cree trop de faux positif (car thing == thing)
 def joinable(predicates1, predicates2, objects1, objects2):
 
     set1 = set()
