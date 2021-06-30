@@ -3,8 +3,8 @@ import os
 import re
 
 import MaRQ
-import common_ontology as CO
-import create_queries as cq
+#import common_ontology as CO
+#import create_queries as cq
 
 
 if len(sys.argv[1:]) > 1:               # read the script's arguments, each one being a mapping path
