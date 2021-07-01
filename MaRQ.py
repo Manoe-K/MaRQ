@@ -112,7 +112,7 @@ def Jaccard_index(predicates1, predicates2, objects1, objects2):
 
 
 # return the triple patterns created with Subject-Subject joins
-def S2S_joinDetection(yarrrml1, yarrrml2):
+def S2S_joinDetection(yarrrml1, yarrrml2, Jaccard_treshold):
 
     #print('S2S')
     #test_bgp = 0
@@ -134,7 +134,7 @@ def S2S_joinDetection(yarrrml1, yarrrml2):
 
             Jaccard = Jaccard_index(predicates1, predicates2, objects1, objects2)
 
-            if subject1 == subject2 or Jaccard > 0.2:
+            if subject1 == subject2 or Jaccard >= Jaccard_treshold:
 
                 templates.append({'M1': subject1,
                                   'M2': subject2})
@@ -221,7 +221,7 @@ def S2S_joinDetection(yarrrml1, yarrrml2):
 
 
 # return the triple patterns created with Object-Object joins
-def O2O_joinDetection(yarrrml1, yarrrml2):
+def O2O_joinDetection(yarrrml1, yarrrml2, Jaccard_treshold):
 
     #print('O2O')
     #test_bgp = 0
@@ -245,7 +245,7 @@ def O2O_joinDetection(yarrrml1, yarrrml2):
             if predicates1 and predicates2:
                 Jaccard = Jaccard_index(predicates1, predicates2, objects1, objects2)
 
-            if object1 == object2 or Jaccard > 0.2:
+            if object1 == object2 or Jaccard >= Jaccard_treshold:
 
                 templates.append({'M1': object1,
                                   'M2': object2})
@@ -331,7 +331,7 @@ def O2O_joinDetection(yarrrml1, yarrrml2):
 
 # return the triple patterns created with Subject-Object joins
 # reversed act as the mappings are inverted, changing the 'source' variable, thus allowing to do Object-Subject joins
-def S2O_joinDetection(yarrrml1, yarrrml2, reversed=False):
+def S2O_joinDetection(yarrrml1, yarrrml2, Jaccard_treshold, reversed=False):
 
     #print('S2O')
     #test_bgp = 0
@@ -355,7 +355,7 @@ def S2O_joinDetection(yarrrml1, yarrrml2, reversed=False):
             if predicates1 and predicates2:
                 Jaccard = Jaccard_index(predicates1, predicates2, objects1, objects2)
 
-            if subject == object or Jaccard > 0.2:
+            if subject == object or Jaccard >= Jaccard_treshold:
 
                 if not reversed:
                     templates.append({'M1': subject,
@@ -443,19 +443,19 @@ def S2O_joinDetection(yarrrml1, yarrrml2, reversed=False):
             'Number_of_triple_patterns_from_M2': tp_M2_count}
 
 
-def compare_mappings(yarrrml1, yarrrml2):
-    return {'subject-subject': S2S_joinDetection(yarrrml1, yarrrml2),
-            'object-object':   O2O_joinDetection(yarrrml1, yarrrml2),
-            'subject-object':  S2O_joinDetection(yarrrml1, yarrrml2),
-            'object-subject':  S2O_joinDetection(yarrrml2, yarrrml1, reversed=True)}
+def compare_mappings(yarrrml1, yarrrml2, Jaccard_treshold):
+    return {'subject-subject': S2S_joinDetection(yarrrml1, yarrrml2, Jaccard_treshold),
+            'object-object':   O2O_joinDetection(yarrrml1, yarrrml2, Jaccard_treshold),
+            'subject-object':  S2O_joinDetection(yarrrml1, yarrrml2, Jaccard_treshold),
+            'object-subject':  S2O_joinDetection(yarrrml2, yarrrml1, Jaccard_treshold, reversed=True)}
 
 
-def compare(mapping1, mapping2):
+def compare(mapping1, mapping2, Jaccard_treshold=0.000001):
 
     yarrrml1 = load(open(mapping1), Loader=Loader)
     yarrrml2 = load(open(mapping2), Loader=Loader)
 
-    return compare_mappings(yarrrml1, yarrrml2)
+    return compare_mappings(yarrrml1, yarrrml2, Jaccard_treshold)
 
 
 # web output
