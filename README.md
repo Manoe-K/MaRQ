@@ -25,7 +25,9 @@ Install dependencies with pip:
 
 Mappings need to be Yarrrml mappings.
 
-They are expected to be saturated (if not MaRQ might miss plausible queries).
+MaRQ use types to make queries, 
+so a saturated mapping can create queries that would have been missed with a standard mapping.
+
 
 'predicateobjects' should be of the form:
 
