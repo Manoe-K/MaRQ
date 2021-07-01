@@ -245,7 +245,7 @@ def O2O_joinDetection(yarrrml1, yarrrml2, Jaccard_treshold):
             if predicates1 and predicates2:
                 Jaccard = Jaccard_index(predicates1, predicates2, objects1, objects2)
 
-            if object1 == object2 or Jaccard >= Jaccard_treshold:
+            if Jaccard >= Jaccard_treshold:
 
                 templates.append({'M1': object1,
                                   'M2': object2})
