@@ -21,14 +21,29 @@ Install dependencies with pip:
 
 `pip install -r requirements.txt`
 
+## Mappings
+
+Mappings needs to be Yarrrml mappings.
+
+They are expected to be saturated (if not MaRQ might miss plausible queries).
+
+'predicateobjects' should be of the form:
+
+`- [{one and only one predicate}, {one and only one object}]`
+
+Types or language aren't supported and might cause issues.
+
 ## Run script
 
-Run the following command:
-`python Marq.py mapping1.yml mapping2.yml`
+Run the following command to execute MaRQ on each possible pair from n mappings:
 
-TEMPORARY:   For now, to change the query type change `join_subject_subject()` to `join_object_object()` or `join_subject_object()` on line 197 of `Marq.py`.
+`python script.py {path to mapping 1} ... {path to mapping n}`
 
-Where `mapping1.yml`and `mapping2.yml` are our YARRRML mapping.
+You can also specify a directory containing only mappings to execute MaRQ on every pair of mappings contained in the directory:
 
-To run the old program:
-`python program.py mapping1.yml mapping2.yml`
+`python script.py {path to directory}`
+
+It's also possible to specify the threshold at which a query is made from two template. Only a pair of template that have a Jaccard index >= of this value will pass.
+
+`python script.py {Jaccard_threshold} {path to directory}`
+
