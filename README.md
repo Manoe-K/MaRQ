@@ -39,13 +39,13 @@ Types or language aren't supported and might cause issues.
 
 Run the following command to execute MaRQ on each possible pair from n mappings:
 
-`python script.py {path to mapping 1} ... {path to mapping n}`
+`python script.py path/to/mapping/1 ... path/to/mapping/n`
 
 You can also specify a directory containing only mappings to execute MaRQ on every pair of mappings contained in the directory:
 
-`python script.py {path to directory}`
+`python script.py path/to/directory`
 
 It's also possible to specify the threshold at which a query is made from two template. Only a pair of template that have a Jaccard index >= of this value will pass.
 
-`python script.py {Jaccard_threshold} {path to directory}`
+`python script.py float_value path/to/directory`
 
