@@ -136,7 +136,8 @@ def S2S_joinDetection(yarrrml1, yarrrml2):
 
             if subject1 == subject2 or Jaccard > 0.2:
 
-                templates.append(subject1)
+                templates.append({'M1': subject1,
+                                  'M2': subject2})
                 Jaccards.append(Jaccard)
                 id_subject = id_subject + 1
                 id_object = 0
@@ -246,7 +247,8 @@ def O2O_joinDetection(yarrrml1, yarrrml2):
 
             if object1 == object2 or Jaccard > 0.2:
 
-                templates.append(object1)
+                templates.append({'M1': object1,
+                                  'M2': object2})
                 Jaccards.append(Jaccard)
                 id_object = id_object + 1
                 id_subject = 0
@@ -355,7 +357,13 @@ def S2O_joinDetection(yarrrml1, yarrrml2, reversed=False):
 
             if subject == object or Jaccard > 0.2:
 
-                templates.append(subject)
+                if not reversed:
+                    templates.append({'M1': subject,
+                                      'M2': object})
+                else:
+                    templates.append({'M1': object,
+                                      'M2': subject})
+
                 Jaccards.append(Jaccard)
                 id_template = id_template + 1
                 id_filler = 0

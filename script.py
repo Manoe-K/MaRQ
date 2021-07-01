@@ -43,10 +43,13 @@ for pair in range(len(MaRQ_results)):
         print()
         print('M1:', MaRQ_results[pair]['name1'])
         print('M2:', MaRQ_results[pair]['name2'])
-        print('Template :\t' + MaRQ_results[pair]['result']['subject-subject']['templates'][k])
+        print('M1_Subject :\t' + MaRQ_results[pair]['result']['subject-subject']['templates'][k]['M1'])
+        print('M2_Subject :\t' + MaRQ_results[pair]['result']['subject-subject']['templates'][k]['M2'])
         print('Jaccard index:\t' + str(MaRQ_results[pair]['result']['subject-subject']['Jaccard_index'][k]))
+        print('Select Count(?S' + str(k+1) + ') Where {')
         for pattern in MaRQ_results[pair]['result']['subject-subject']['triple_patterns'][k]:
-            print(MaRQ.triple_pattern_to_sparql(pattern))
+            print('\t' + MaRQ.triple_pattern_to_sparql(pattern))
+        print('}')
 
     print()
     print()
@@ -55,10 +58,13 @@ for pair in range(len(MaRQ_results)):
         print()
         print('M1:', MaRQ_results[pair]['name1'])
         print('M2:', MaRQ_results[pair]['name2'])
-        print('Template :\t' + MaRQ_results[pair]['result']['object-object']['templates'][k])
+        print('M1_Object :\t' + MaRQ_results[pair]['result']['object-object']['templates'][k]['M1'])
+        print('M2_Object :\t' + MaRQ_results[pair]['result']['object-object']['templates'][k]['M2'])
         print('Jaccard index:\t' + str(MaRQ_results[pair]['result']['object-object']['Jaccard_index'][k]))
+        print('Select Count(?O' + str(k+1) + ') Where {')
         for pattern in MaRQ_results[pair]['result']['object-object']['triple_patterns'][k]:
-            print(MaRQ.triple_pattern_to_sparql(pattern))
+            print('\t' + MaRQ.triple_pattern_to_sparql(pattern))
+        print('}')
 
     print()
     print()
@@ -67,10 +73,13 @@ for pair in range(len(MaRQ_results)):
         print()
         print('M1:', MaRQ_results[pair]['name1'])
         print('M2:', MaRQ_results[pair]['name2'])
-        print('Template :\t' + MaRQ_results[pair]['result']['subject-object']['templates'][k])
+        print('M1_Subject :\t' + MaRQ_results[pair]['result']['subject-object']['templates'][k]['M1'])
+        print('M2_Object :\t' + MaRQ_results[pair]['result']['subject-object']['templates'][k]['M2'])
         print('Jaccard index:\t' + str(MaRQ_results[pair]['result']['subject-object']['Jaccard_index'][k]))
+        print('Select Count(?T' + str(k+1) + ') Where {')
         for pattern in MaRQ_results[pair]['result']['subject-object']['triple_patterns'][k]:
-            print(MaRQ.triple_pattern_to_sparql(pattern))
+            print('\t' + MaRQ.triple_pattern_to_sparql(pattern))
+        print('}')
 
     print()
     print()
@@ -78,10 +87,10 @@ for pair in range(len(MaRQ_results)):
     for k in range(len(MaRQ_results[pair]['result']['object-subject']['templates'])):
         print('M1:', MaRQ_results[pair]['name1'])
         print('M2:', MaRQ_results[pair]['name2'])
-        print('Template :\t' + MaRQ_results[pair]['result']['object-subject']['templates'][k])
+        print('M1_Object :\t' + MaRQ_results[pair]['result']['object-subject']['templates'][k]['M1'])
+        print('M2_Subject :\t' + MaRQ_results[pair]['result']['object-subject']['templates'][k]['M2'])
         print('Jaccard index:\t' + str(MaRQ_results[pair]['result']['object-subject']['Jaccard_index'][k]))
+        print('Select Count(?T' + str(k+1) + ') Where {')
         for pattern in MaRQ_results[pair]['result']['object-subject']['triple_patterns'][k]:
-            print(MaRQ.triple_pattern_to_sparql(pattern))
-
-
-
+            print('\t' + MaRQ.triple_pattern_to_sparql(pattern))
+        print('}')
