@@ -23,7 +23,7 @@ Install dependencies with pip:
 
 ## Mappings
 
-Mappings needs to be Yarrrml mappings.
+Mappings need to be Yarrrml mappings.
 
 They are expected to be saturated (if not MaRQ might miss plausible queries).
 
