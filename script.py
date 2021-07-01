@@ -22,7 +22,6 @@ elif len(sys.argv[1:]) == 1:            # read the script's argument, being the 
     mappings_directory = os.listdir(sys.argv[1])
     for mapping in mappings_directory:
         l_names.append(mapping)
-        print(mapping)
         l_mapping.append(sys.argv[1] + '/' + mapping)
 
 
@@ -35,26 +34,54 @@ for i in range(len(l_mapping)):
             'name2': l_names[j],
             'result': MaRQ.compare(l_mapping[i], l_mapping[j])})    # Create queries out of possible joins
 
-"""
-# Calculate the minimal common subject of each pair of mappings, for each of there s2s joins
-common_types = []
-for pair in MaRQ_results:
-    common_types.append(CO.get_common_ontologies(pair['result']))
 
-for i in range(len(MaRQ_results)):
-    print(cq.create_queries(MaRQ_results[i], common_types[i]))
-"""
-
-"""
 # Print the results
-for k in range(len(MaRQ_results)):
+for pair in range(len(MaRQ_results)):
     print()
-    print('M1:', MaRQ_results[k]['name1'])
-    print('M2:', MaRQ_results[k]['name2'])
+    print('subject-subject:')
+    for k in range(len(MaRQ_results[pair]['result']['subject-subject']['templates'])):
+        print()
+        print('M1:', MaRQ_results[pair]['name1'])
+        print('M2:', MaRQ_results[pair]['name2'])
+        print('Template :\t' + MaRQ_results[pair]['result']['subject-subject']['templates'][k])
+        print('Jaccard index:\t' + str(MaRQ_results[pair]['result']['subject-subject']['Jaccard_index'][k]))
+        for pattern in MaRQ_results[pair]['result']['subject-subject']['triple_patterns'][k]:
+            print(MaRQ.triple_pattern_to_sparql(pattern))
 
     print()
-    for list in co:
-        for set in list:
-            print(set)
     print()
-"""
+    print('object-object:')
+    for k in range(len(MaRQ_results[pair]['result']['object-object']['templates'])):
+        print()
+        print('M1:', MaRQ_results[pair]['name1'])
+        print('M2:', MaRQ_results[pair]['name2'])
+        print('Template :\t' + MaRQ_results[pair]['result']['object-object']['templates'][k])
+        print('Jaccard index:\t' + str(MaRQ_results[pair]['result']['object-object']['Jaccard_index'][k]))
+        for pattern in MaRQ_results[pair]['result']['object-object']['triple_patterns'][k]:
+            print(MaRQ.triple_pattern_to_sparql(pattern))
+
+    print()
+    print()
+    print('subject-object:')
+    for k in range(len(MaRQ_results[pair]['result']['subject-object']['templates'])):
+        print()
+        print('M1:', MaRQ_results[pair]['name1'])
+        print('M2:', MaRQ_results[pair]['name2'])
+        print('Template :\t' + MaRQ_results[pair]['result']['subject-object']['templates'][k])
+        print('Jaccard index:\t' + str(MaRQ_results[pair]['result']['subject-object']['Jaccard_index'][k]))
+        for pattern in MaRQ_results[pair]['result']['subject-object']['triple_patterns'][k]:
+            print(MaRQ.triple_pattern_to_sparql(pattern))
+
+    print()
+    print()
+    print('object-subject:')
+    for k in range(len(MaRQ_results[pair]['result']['object-subject']['templates'])):
+        print('M1:', MaRQ_results[pair]['name1'])
+        print('M2:', MaRQ_results[pair]['name2'])
+        print('Template :\t' + MaRQ_results[pair]['result']['object-subject']['templates'][k])
+        print('Jaccard index:\t' + str(MaRQ_results[pair]['result']['object-subject']['Jaccard_index'][k]))
+        for pattern in MaRQ_results[pair]['result']['object-subject']['triple_patterns'][k]:
+            print(MaRQ.triple_pattern_to_sparql(pattern))
+
+
+

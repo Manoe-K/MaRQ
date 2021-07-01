@@ -94,12 +94,10 @@ def get_triplets_of_object(yarrrml, object_to_search_with):
     return predicates, subjects
 
 
-def joinable(predicates1, predicates2, objects1, objects2):
+def Jaccard_index(predicates1, predicates2, objects1, objects2):
 
     set1 = set()
     set2 = set()
-
-    print()
 
     for i in range(len(objects1)):
         if predicates1[i] == 'a' or predicates1[i] == 'rdf:type':
@@ -108,19 +106,9 @@ def joinable(predicates1, predicates2, objects1, objects2):
         if predicates2[i] == 'a' or predicates2[i] == 'rdf:type':
             set2.add(objects2[i])
 
-    print('set1')
-    print(set1)
-    print('set2')
-    print(set2)
-    print('set1 n set2')
-    print(set1.intersection(set2))
-
     Jaccard = len(set1.intersection(set2))/len(set1.union(set2))
 
-    print('Jaccard')
-    print(Jaccard)
-
-    return Jaccard > 0
+    return Jaccard
 
 
 # return the triple patterns created with Subject-Subject joins
@@ -129,10 +117,12 @@ def S2S_joinDetection(yarrrml1, yarrrml2):
     #print('S2S')
     #test_bgp = 0
 
-    bgp = []
+    templates = [] # List of all tempalte used for joins
+    bgp = []  # List of all joins made with those templates
+    Jaccards = []  # List of the Jaccard index linked to those join
     list_tp_per_template_count = []
-    tp_M1_count = 0
-    tp_M2_count = 0
+    tp_M1_count = 0  # Per template
+    tp_M2_count = 0  # Per template
 
     id_subject = 0
 
@@ -142,7 +132,12 @@ def S2S_joinDetection(yarrrml1, yarrrml2):
             predicates1, objects1 = get_triplets_of_subject(yarrrml1, subject1)
             predicates2, objects2 = get_triplets_of_subject(yarrrml2, subject2)
 
-            if subject1 == subject2 or joinable(predicates1, predicates2, objects1, objects2):
+            Jaccard = Jaccard_index(predicates1, predicates2, objects1, objects2)
+
+            if subject1 == subject2 or Jaccard > 0.2:
+
+                templates.append(subject1)
+                Jaccards.append(Jaccard)
                 id_subject = id_subject + 1
                 id_object = 0
                 triple_patterns = []
@@ -214,8 +209,11 @@ def S2S_joinDetection(yarrrml1, yarrrml2):
                 #print(test_bgp, ': ', subject1, ' et ', subject2)
                 list_tp_per_template_count.append(tp_per_template_count)
                 bgp.append(triple_patterns)
+                Jaccards.append(Jaccard)
 
-    return {'triple_patterns': bgp,
+    return {'templates': templates,
+            'Jaccard_index': Jaccards,
+            'triple_patterns': bgp,
             'Number_of_triple_patterns': list_tp_per_template_count,
             'Number_of_triple_patterns_from_M1': tp_M1_count,
             'Number_of_triple_patterns_from_M2': tp_M2_count}
@@ -227,10 +225,12 @@ def O2O_joinDetection(yarrrml1, yarrrml2):
     #print('O2O')
     #test_bgp = 0
 
-    bgp = []
+    templates = [] # List of all tempalte used for joins
+    bgp = []  # List of all joins made with those templates
+    Jaccards = []  # List of the Jaccard index linked to those join
     list_tp_per_template_count = []
-    tp_M1_count = 0
-    tp_M2_count = 0
+    tp_M1_count = 0  # Per template
+    tp_M2_count = 0  # Per template
 
     id_object = 0
 
@@ -240,11 +240,14 @@ def O2O_joinDetection(yarrrml1, yarrrml2):
             predicates1, objects1 = get_triplets_of_subject(yarrrml1, object1)
             predicates2, objects2 = get_triplets_of_subject(yarrrml2, object2)
 
-            join = False
+            Jaccard = 0
             if predicates1 and predicates2:
-                join = joinable(predicates1, predicates2, objects1, objects2)
+                Jaccard = Jaccard_index(predicates1, predicates2, objects1, objects2)
 
-            if object1 == object2 or join:
+            if object1 == object2 or Jaccard > 0.2:
+
+                templates.append(object1)
+                Jaccards.append(Jaccard)
                 id_object = id_object + 1
                 id_subject = 0
                 triple_patterns = []
@@ -316,7 +319,9 @@ def O2O_joinDetection(yarrrml1, yarrrml2):
                 list_tp_per_template_count.append(tp_per_template_count)
                 bgp.append(triple_patterns)
 
-    return {'triple_patterns': bgp,
+    return {'templates': templates,
+            'Jaccard_index': Jaccards,
+            'triple_patterns': bgp,
             'Number_of_triple_patterns': list_tp_per_template_count,
             'Number_of_triple_patterns_from_M1': tp_M1_count,
             'Number_of_triple_patterns_from_M2': tp_M2_count}
@@ -329,10 +334,12 @@ def S2O_joinDetection(yarrrml1, yarrrml2, reversed=False):
     #print('S2O')
     #test_bgp = 0
 
-    bgp = []
+    templates = [] # List of all tempalte used for joins
+    bgp = []  # List of all joins made with those templates
+    Jaccards = []  # List of the Jaccard index linked to those join
     list_tp_per_template_count = []
-    tp_M1_count = 0
-    tp_M2_count = 0
+    tp_M1_count = 0  # Per template
+    tp_M2_count = 0  # Per template
 
     id_template = 0
 
@@ -342,11 +349,14 @@ def S2O_joinDetection(yarrrml1, yarrrml2, reversed=False):
             predicates1, objects1 = get_triplets_of_subject(yarrrml1, subject)
             predicates2, objects2 = get_triplets_of_subject(yarrrml2, object)
 
-            join = False
+            Jaccard = 0
             if predicates1 and predicates2:
-                join = joinable(predicates1, predicates2, objects1, objects2)
+                Jaccard = Jaccard_index(predicates1, predicates2, objects1, objects2)
 
-            if subject == object or join:
+            if subject == object or Jaccard > 0.2:
+
+                templates.append(subject)
+                Jaccards.append(Jaccard)
                 id_template = id_template + 1
                 id_filler = 0
                 triple_patterns = []
@@ -417,7 +427,9 @@ def S2O_joinDetection(yarrrml1, yarrrml2, reversed=False):
                 list_tp_per_template_count.append(tp_per_template_count)
                 bgp.append(triple_patterns)
 
-    return {'triple_patterns': bgp,
+    return {'templates': templates,
+            'Jaccard_index': Jaccards,
+            'triple_patterns': bgp,
             'Number_of_triple_patterns': list_tp_per_template_count,
             'Number_of_triple_patterns_from_M1': tp_M1_count,
             'Number_of_triple_patterns_from_M2': tp_M2_count}
