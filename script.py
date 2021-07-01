@@ -84,7 +84,10 @@ for pair in range(len(MaRQ_results)):
             print('#Jaccard index:\t' + str(MaRQ_results[pair]['result']['object-object']['Jaccard_index'][k]) + '\tStill pass because both objects are equal.')
         else:
             print('#Jaccard index:\t' + str(MaRQ_results[pair]['result']['object-object']['Jaccard_index'][k]))
-        print('Select Count(?O' + str(k+1) + ') Where {')
+        if len(MaRQ_results[pair]['result']['object-object']['triple_patterns'][k]) == 1:
+            print('Select Count(*) Where {')
+        else:
+            print('Select Count(?O' + str(k+1) + ') Where {')
         for pattern in MaRQ_results[pair]['result']['object-object']['triple_patterns'][k]:
             print('\t' + MaRQ.triple_pattern_to_sparql(pattern))
         print('}')
