@@ -1,0 +1,68 @@
+mappings:
+  Docteur:
+    predicateobjects:
+      - [a, 'http://schema.org/Person']
+      - [a, 'http://purl.org/dc/terms/Agent']
+      - [a, 'http://purl.org/goodrelations/v1#BusinessEntity']
+      - [a, 'http://rhizomik.net/ontologies/copyrightonto.owl#LegalPerson']
+      - [a, 'http://www.w3.org/2000/10/swap/pim/contact#Person']
+      - [a, 'http://www.w3.org/2003/01/geo/wgs84_pos#SpatialThing']
+      - [a, 'http://xmlns.com/foaf/0.1/Agent']
+      - [a, 'http://xmlns.com/foaf/0.1/Person']
+      - [a, 'http://linkedgeodata.org/ontology/Doctor']
+      - [a, 'http://linkedgeodata.org/ontology/Amenity']
+      - ['https://schema.org/givenName', $(nom)]
+      - ['https://pending.schema.org/jobTitle', $(libelle_profession)]
+      - ['http://dbpedia.org/ontology/speciality', $(libelle_profession)]
+      - ['https://pending.schema.org/jobTitle', $(code_profession)]
+      - ['http://dbpedia.org/ontology/speciality', $(code_profession)]
+      - ['http://open.vocab.org/terms/phoneNumber', $(telephone)]
+      - ['http://data.ign.fr/def/geofla/20190212.htm#numInsee', $(code_insee)]
+      - ['http://dbpedia.org/ontology/inseeCode', $(code_insee)]
+      - ['https://schema.org/location', Address]
+      - ['http://rdfs.co/juso/address', Address]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/annuaire-des-professionnels-de-sante%40public/Doctor/$(nom)-$(code_insee)
+  Address:
+    predicateobjects:
+      - [a, 'http://rdfs.co/juso/Address']
+      - [a, 'http://schema.org/Place']
+      - ['http://rdfs.co/juso/full_address', $(adress)]
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(adresse)]
+      - ['http://www.w3.org/2003/01/geo/wgs84_pos#lat_long', $(coordonnees)]
+      - ['http://dbpedia.org/ontology/commune', Commune]
+      - ['http://schema.org/postalCode', $(code_postal)]
+      - ['http://dbpedia.org/ontology/postalCode', $(code_postal)]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/annuaire-des-professionnels-de-sante%40public/Adress/$(adresse)
+  Commune:
+    predicateobjects:
+      - [a, 'http://rdf.insee.fr/def/geo#Commune']
+      - [a, 'http://data.ign.fr/def/geofla#Commune']
+      - [a, 'http://schema.org/Place']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(nom_com)]
+      - ['http://dbpedia.org/ontology/commune', Commune]
+      - ['http://dbpedia.org/ontology/department', Departement]
+      - ['http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#isPartOf', Department]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/annuaire-des-professionnels-de-sante%40public/Commune/$(nom_com)
+  Department:
+    predicateobjects:
+      - [a, 'http://dbpedia.org/ontology/Department']
+      - [a, 'http://dbpedia.org/ontology/GovernmentalAdministrativeRegion']
+      - [a, 'http://schema.org/Place']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(nom_dep)]
+      - ['http://dbpedia.org/ontology/region', Region]
+      - ['http://www.ontologydesignpatterns.org/ont/dul/DUL.owl#hasLocation', Region]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/annuaire-des-professionnels-de-sante%40public/Department/$(nom_dep)/
+  Region:
+    predicateobjects:
+      - [a, 'http://dbpedia.org/ontology/Region']
+      - [a, 'http://dbpedia.org/ontology/PopulatedPlace']
+      - [a, 'http://schema.org/Place']
+      - ['http://www.w3.org/2000/01/rdf-schema#label', $(nom_reg)]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/annuaire-des-professionnels-de-sante%40public/Region/$(nom_reg)/
+sources:
+  dataset-source: [annuaire-des-professionnels-de-sante%40public.json~jsonpath, '$.records.[*].fields']
