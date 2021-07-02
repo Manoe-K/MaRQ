@@ -1,0 +1,38 @@
+mappings:
+  Veligo:
+    predicateobjects:
+      - [ a, 'http://dbpedia.org/ontology/Station ']
+      - [ a, 'https://dbpedia.org/ontology/PublicService' ]
+      - [ a, 'http://schema.org/Place' ]
+      - [ a, 'http://dbpedia.org/ontology/Place' ]
+      - [ 'https://saref.etsi.org/saref4ehaw/geolocation', $(geo_point_2d) ]
+      - [ 'http://www.w3.org/2000/01/rdf-schema#label', $(nom_veligo) ]
+      - [ 'http://data.ign.fr/def/topo#miseEnService', $(date_mes)]
+      - [ 'https://dbpedia.org/ontology/operator', $(exploitant)]
+      - [ 'https://schema.org/price', $(tarif)]
+      - [ 'https://schema.org/location', Station ]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/parcs-veligo-en-ile-de-france0@datailedefrance/Veligo/$(id_Veligo)/
+  Station:
+    predicateobjects:
+      - [ a, 'https://dbpedia.org/ontology/RailwayStation']
+      - [ a, 'https://dbpedia.org/ontology/PublicService' ]
+      - [ a, 'http://schema.org/Place' ]
+      - [ a, 'http://dbpedia.org/ontology/Place' ]
+      - [ 'http://www.w3.org/2000/01/rdf-schema#label', $(nom_lda) ]
+      - [ 'https://schema.org/location', $(nom_gare) ]
+      - [ 'https://dbpedia.org/ontology/routeLine', $(lignes) ]
+      - [ 'https://dbpedia.org/ontology/municipality', Municipality ]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/parcs-veligo-en-ile-de-france0@datailedefrance/Station/$(id_ref_lda)/
+  Municipality:
+    predicateobjects:
+      - [ a, 'https://dbpedia.org/ontology/Municipality']
+      - [ a, 'http://rdf.insee.fr/def/geo#Commune' ]
+      - [ a, 'http://schema.org/Place' ]
+      - [ 'https://dbpedia.org/ontology/department', $(dpt) ]
+      - [ 'https://dbpedia.org/ontology/inseeCode', $(insee_com) ]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/parcs-veligo-en-ile-de-france0@datailedefrance/Municipality/$(nom_com)/
+sources:
+  dataset-source: [ parcs-veligo-en-ile-de-france0@datailedefrance.json~jsonpath, '$.records.[*].fields' ]

@@ -1,0 +1,33 @@
+mappings:
+  Cinema:
+    predicateobjects:
+      - [ a, 'https://dbpedia.org/ontology/PublicService' ]
+      - [ 'https://dbpedia.org/ontology/owner', $(proprietaire) ]
+      - [ 'http://www.w3.org/2000/01/rdf-schema#label', $(nom) ]
+      - [ 'https://schema.org/location', Address ]
+      - [ 'http://rdfs.co/juso/address', Address ]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/salle_de_cinema_ile-de-francedatailedefrance@cinema-public/Cinema/$(N°auto)
+  Address:
+    predicateobjects:
+      - [ a, 'http://rdfs.co/juso/Address' ]
+      - [ a, 'http://schema.org/Place' ]
+      - [ 'http://www.w3.org/2003/01/geo/wgs84_pos#lat', $(latitude) ]
+      - [ 'http://www.w3.org/2003/01/geo/wgs84_pos#long', $(longitude) ]
+      - [ 'https://saref.etsi.org/saref4ehaw/geolocation', $(geolocalisation) ]
+      - [ 'https://dbpedia.org/ontology/commune', Commune ]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/salle_de_cinema_ile-de-francedatailedefrance@cinema-public/Address/$(adresse)
+  Commune:
+    predicateobjects:
+      - [ a, 'http://rdf.insee.fr/def/geo#Commune' ]
+      - [ a, 'http://schema.org/Place' ]
+      - [ a, 'http://dbpedia.org/ontology/Place' ]
+      - [ 'https://dbpedia.org/ontology/populationTotal', $(population_de_la_commune) ]
+      - [ 'https://dbpedia.org/ontology/department', $(dep) ]
+      - [ 'https://dbpedia.org/ontology/inseeCode', $(code_insee) ]
+      - [ 'https://dbpedia.org/ontology/region', $(region_administartive) ]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/salle_de_cinema_ile-de-francedatailedefrance@cinema-public/Commune/$(commune)
+sources:
+  dataset-source: [ salle_de_cinema_ile-de-francedatailedefrance@cinema-public.json~jsonpath, '$.records.[*].fields' ]
