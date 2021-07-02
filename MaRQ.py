@@ -48,9 +48,9 @@ def get_objects(yarrrml):
         predicate_objects = get_keys(mapping, 'predicateobjects')
         for predicate_object in predicate_objects:
             if predicate_object[1] in names:     # If object is a reference, we use the subject it refers to
-                objects.add(mappings[predicate_object[1]]['subject'])
+                objects.add((predicate_object[1], mappings[predicate_object[1]]['subject']))            # send both the reference and the template
             else:
-                objects.add(predicate_object[1])
+                objects.add((predicate_object[1], predicate_object[1]))                                 # send the object twice so it wont cause issue later
 
     return objects
 
@@ -238,25 +238,25 @@ def O2O_joinDetection(yarrrml1, yarrrml2, Jaccard_treshold):
     for object1 in get_objects(yarrrml1):
         for object2 in get_objects(yarrrml2):
 
-            predicates1, objects1 = get_triplets_of_subject(yarrrml1, object1)
-            predicates2, objects2 = get_triplets_of_subject(yarrrml2, object2)
+            predicates1, objects1 = get_triplets_of_subject(yarrrml1, object1[1])
+            predicates2, objects2 = get_triplets_of_subject(yarrrml2, object2[1])
 
             Jaccard = 0
             if predicates1 and predicates2:
                 Jaccard = Jaccard_index(predicates1, predicates2, objects1, objects2)
 
-            if Jaccard >= Jaccard_treshold or object1 == object2:
+            if Jaccard >= Jaccard_treshold or object1[0] == object2[0]:
 
-                templates.append({'M1': object1,
-                                  'M2': object2})
+                templates.append({'M1': object1[0],
+                                  'M2': object2[0]})
                 Jaccards.append(Jaccard)
                 id_object = id_object + 1
                 id_subject = 0
                 triple_patterns = []
                 tp_per_template_count = 0
 
-                predicates1, subjects1 = get_triplets_of_object(yarrrml1, object1)
-                predicates2, subjects2 = get_triplets_of_object(yarrrml2, object2)
+                predicates1, subjects1 = get_triplets_of_object(yarrrml1, object1[1])
+                predicates2, subjects2 = get_triplets_of_object(yarrrml2, object2[1])
 
                 for i in range(len(predicates1)):
                     if predicates1[i] in predicates2:
@@ -271,7 +271,7 @@ def O2O_joinDetection(yarrrml1, yarrrml2, Jaccard_treshold):
                     while k < len(triple_patterns) and not already_in:
                         if predicates1[i] == triple_patterns[k]['predicate']:
                             if predicates1[i] == 'rdf:type' or predicates1[i] == 'a':
-                                if object1 == triple_patterns[k]['object']:
+                                if object1[1] == triple_patterns[k]['object']:
                                     already_in = True
                             else:
                                 already_in = True
@@ -285,7 +285,7 @@ def O2O_joinDetection(yarrrml1, yarrrml2, Jaccard_treshold):
                             triple_patterns.append(
                                 {'subject':    '?S' + str(id_subject),
                                  'predicate':   str(predicates1[i]),
-                                 'object':     object1,
+                                 'object':     object1[1],
                                  'source':     source})
                         else:
                             triple_patterns.append(
@@ -307,7 +307,7 @@ def O2O_joinDetection(yarrrml1, yarrrml2, Jaccard_treshold):
                             """triple_patterns.append(
                                 {'subject':    '?S' + str(id_subject),
                                  'predicate':   str(predicates2[i]),
-                                 'object':     object2,
+                                 'object':     object2[1],
                                  'source':     source})"""
                         else:
                             triple_patterns.append(
@@ -349,7 +349,7 @@ def S2O_joinDetection(yarrrml1, yarrrml2, Jaccard_treshold, reversed=False):
         for object in get_objects(yarrrml2):
 
             predicates1, objects1 = get_triplets_of_subject(yarrrml1, subject)
-            predicates2, objects2 = get_triplets_of_subject(yarrrml2, object)
+            predicates2, objects2 = get_triplets_of_subject(yarrrml2, object[1])
 
             Jaccard = 0
             if predicates1 and predicates2:
@@ -359,9 +359,9 @@ def S2O_joinDetection(yarrrml1, yarrrml2, Jaccard_treshold, reversed=False):
 
                 if not reversed:
                     templates.append({'M1': subject,
-                                      'M2': object})
+                                      'M2': object[0]})
                 else:
-                    templates.append({'M1': object,
+                    templates.append({'M1': object[0],
                                       'M2': subject})
 
                 Jaccards.append(Jaccard)
@@ -370,7 +370,7 @@ def S2O_joinDetection(yarrrml1, yarrrml2, Jaccard_treshold, reversed=False):
                 triple_patterns = []
                 tp_per_template_count = 0
 
-                predicates2, objects2 = get_triplets_of_object(yarrrml2, object)
+                predicates2, objects2 = get_triplets_of_object(yarrrml2, object[1])
 
                 for i in range(len(predicates1)):
                     if predicates1[i] in predicates2:
