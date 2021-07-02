@@ -114,9 +114,6 @@ def Jaccard_index(predicates1, predicates2, objects1, objects2):
 # return the triple patterns created with Subject-Subject joins
 def S2S_joinDetection(yarrrml1, yarrrml2, Jaccard_treshold):
 
-    #print('S2S')
-    #test_bgp = 0
-
     templates = [] # List of all tempalte used for joins
     bgp = []  # List of all joins made with those templates
     Jaccards = []  # List of the Jaccard index linked to those join
@@ -206,8 +203,6 @@ def S2S_joinDetection(yarrrml1, yarrrml2, Jaccard_treshold):
                                  'object':     '?O' + str(id_object),
                                  'source':     source})
 
-                #test_bgp = test_bgp + 1
-                #print(test_bgp, ': ', subject1, ' et ', subject2)
                 list_tp_per_template_count.append(tp_per_template_count)
                 bgp.append(triple_patterns)
                 Jaccards.append(Jaccard)
@@ -222,9 +217,6 @@ def S2S_joinDetection(yarrrml1, yarrrml2, Jaccard_treshold):
 
 # return the triple patterns created with Object-Object joins
 def O2O_joinDetection(yarrrml1, yarrrml2, Jaccard_treshold):
-
-    #print('O2O')
-    #test_bgp = 0
 
     templates = [] # List of all tempalte used for joins
     bgp = []  # List of all joins made with those templates
@@ -316,8 +308,6 @@ def O2O_joinDetection(yarrrml1, yarrrml2, Jaccard_treshold):
                                  'object':     '?O' + str(id_object),
                                  'source':     source})
 
-                #test_bgp = test_bgp + 1
-                #print(test_bgp, ': ', object1, ' et ', object2)
                 list_tp_per_template_count.append(tp_per_template_count)
                 bgp.append(triple_patterns)
 
@@ -332,9 +322,6 @@ def O2O_joinDetection(yarrrml1, yarrrml2, Jaccard_treshold):
 # return the triple patterns created with Subject-Object joins
 # reversed act as the mappings are inverted, changing the 'source' variable, thus allowing to do Object-Subject joins
 def S2O_joinDetection(yarrrml1, yarrrml2, Jaccard_treshold, reversed=False):
-
-    #print('S2O')
-    #test_bgp = 0
 
     templates = [] # List of all tempalte used for joins
     bgp = []  # List of all joins made with those templates
@@ -430,8 +417,6 @@ def S2O_joinDetection(yarrrml1, yarrrml2, Jaccard_treshold, reversed=False):
                          'object':     '?T' + str(id_template),
                          'source':     source})
 
-                #test_bgp = test_bgp + 1
-                #print(test_bgp, ': ', subject, ' et ', object)
                 list_tp_per_template_count.append(tp_per_template_count)
                 bgp.append(triple_patterns)
 
