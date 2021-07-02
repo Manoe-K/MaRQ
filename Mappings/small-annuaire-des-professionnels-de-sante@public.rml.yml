@@ -1,0 +1,19 @@
+mappings:
+  Docteur:
+    predicateobjects:
+      - [a, 'http://schema.org/Person']
+      - [a, 'http://linkedgeodata.org/ontology/Doctor']
+      - ['https://schema.org/location', Address]
+      - [ 'http://dbpedia.org/ontology/speciality', $(code_profession) ]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/annuaire-des-professionnels-de-sante%40public/Doctor/$(nom)-$(code_insee)
+  Address:
+    predicateobjects:
+      - [a, 'http://rdfs.co/juso/Address']
+      - [a, 'http://schema.org/Place']
+      - ['http://rdfs.co/juso/full_address', $(adress)]
+      - ['http://schema.org/postalCode', $(code_postal)]
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/annuaire-des-professionnels-de-sante%40public/Adress/$(adresse)
+sources:
+  dataset-source: [annuaire-des-professionnels-de-sante%40public.json~jsonpath, '$.records.[*].fields']

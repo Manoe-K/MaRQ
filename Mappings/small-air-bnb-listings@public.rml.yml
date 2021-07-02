@@ -1,0 +1,24 @@
+mappings:
+  Home:
+    predicateobjects:
+      - [a, 'http://www.w3.org/2006/vcard/ns#Home']
+      - [a, 'http://schema.org/Residence']
+      - [a, 'http://schema.org/Place']
+      - ['http://dbpedia.org/ontology/owner', Host]
+      - ['https://schema.org/containedInPlace', Neighbourhood]
+    source: dataset-source
+    subject: https://www.airbnb.com/rooms/$(listing_id)
+  Host:
+    predicateobjects:
+      - [a, 'http://schema.org/Person']
+      - [a, 'http://purl.org/goodrelations/v1#BusinessEntity']
+    source: dataset-source
+    subject: https://www.airbnb.com/users/show/$(host_id)
+  Neighbourhood:
+    predicateobjects:
+      - [a, 'http://schema.org/Place']
+      - [a, 'http://dbpedia.org/ontology/PopulatedPlace']
+    source: dataset-source
+    subject: https://data.opendatasoft.com/ld/resources/air-bnb-listings@public/Neighbourhood/$(neighbourhood)/
+sources:
+  dataset-source: [air-bnb-listings@public.json~jsonpath, '$.records.[*].fields']

@@ -89,8 +89,14 @@ for pair in range(len(MaRQ_results)):
         print('#M2:', MaRQ_results[pair]['name2'])
         print('#M1_Object :\t' + MaRQ_results[pair]['result']['object-object']['templates'][k]['M1'])
         print('#M2_Object :\t' + MaRQ_results[pair]['result']['object-object']['templates'][k]['M2'])
-        print('#Jaccard index:\t' + str(MaRQ_results[pair]['result']['object-object']['Jaccard_index'][k]))
-        print('Select Count(?O' + str(k+1) + ') Where {')
+        if MaRQ_results[pair]['result']['object-object']['Jaccard_index'][k] == 0:
+            print('#Jaccard index:\t' + str(MaRQ_results[pair]['result']['object-object']['Jaccard_index'][k]) + '\t la query est acceptée car les objets sont la même chaine de character')
+        else:
+            print('#Jaccard index:\t' + str(MaRQ_results[pair]['result']['object-object']['Jaccard_index'][k]))
+        if len(MaRQ_results[pair]['result']['object-object']['triple_patterns'][k]) == 1:
+            print('Select Count(*) Where {')
+        else:
+            print('Select Count(?O' + str(k+1) + ') Where {')
         for pattern in MaRQ_results[pair]['result']['object-object']['triple_patterns'][k]:
             print('\t' + triple_pattern_to_sparql(pattern))
         print('}')
