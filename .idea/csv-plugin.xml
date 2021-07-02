@@ -59,6 +59,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\parcs-veligo-en-ile-de-france0@datailedefrance.rml.yml">
+          <value>
+            <Attribute>
+              <option name="separator" value=":" />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\result_queries.txt">
           <value>
             <Attribute>
