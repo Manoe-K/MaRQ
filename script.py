@@ -15,6 +15,15 @@ def is_number(string):
         return False
 
 
+def triple_pattern_to_sparql(pattern):
+    if pattern['predicate'] == 'a':
+        return pattern['subject'] + ' ' + pattern['predicate'] + ' <' + pattern['object'] + '>' + '.\t#' + pattern['source']
+    elif pattern['predicate'] == 'rdf:type':
+        return pattern['subject'] + ' ' + pattern['predicate'] + ' <' + pattern['object'] + '>' + '.\t#' + pattern['source']
+    else:
+        return pattern['subject'] + ' <' + pattern['predicate'] + '> ' + pattern['object'] + '.\t#' + pattern['source']
+
+
 # Main
 
 if is_number(sys.argv[1]):          # let us parameter the threshold at which we accept a join
@@ -68,7 +77,7 @@ for pair in range(len(MaRQ_results)):
         print('#Jaccard index:\t' + str(MaRQ_results[pair]['result']['subject-subject']['Jaccard_index'][k]))
         print('Select Count(?S' + str(k+1) + ') Where {')
         for pattern in MaRQ_results[pair]['result']['subject-subject']['triple_patterns'][k]:
-            print('\t' + MaRQ.triple_pattern_to_sparql(pattern))
+            print('\t' + triple_pattern_to_sparql(pattern))
         print('}')
 
     print()
@@ -83,7 +92,7 @@ for pair in range(len(MaRQ_results)):
         print('#Jaccard index:\t' + str(MaRQ_results[pair]['result']['object-object']['Jaccard_index'][k]))
         print('Select Count(?O' + str(k+1) + ') Where {')
         for pattern in MaRQ_results[pair]['result']['object-object']['triple_patterns'][k]:
-            print('\t' + MaRQ.triple_pattern_to_sparql(pattern))
+            print('\t' + triple_pattern_to_sparql(pattern))
         print('}')
 
     print()
@@ -98,7 +107,7 @@ for pair in range(len(MaRQ_results)):
         print('#Jaccard index:\t' + str(MaRQ_results[pair]['result']['subject-object']['Jaccard_index'][k]))
         print('Select Count(?T' + str(k+1) + ') Where {')
         for pattern in MaRQ_results[pair]['result']['subject-object']['triple_patterns'][k]:
-            print('\t' + MaRQ.triple_pattern_to_sparql(pattern))
+            print('\t' + triple_pattern_to_sparql(pattern))
         print('}')
 
     print()
@@ -113,5 +122,5 @@ for pair in range(len(MaRQ_results)):
         print('#Jaccard index:\t' + str(MaRQ_results[pair]['result']['object-subject']['Jaccard_index'][k]))
         print('Select Count(?T' + str(k+1) + ') Where {')
         for pattern in MaRQ_results[pair]['result']['object-subject']['triple_patterns'][k]:
-            print('\t' + MaRQ.triple_pattern_to_sparql(pattern))
+            print('\t' + triple_pattern_to_sparql(pattern))
         print('}')
