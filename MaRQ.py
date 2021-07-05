@@ -160,7 +160,7 @@ def S2S_joinDetection(yarrrml1, yarrrml2, Jaccard_treshold):
                     if predicates1[i] == 'rdf:type' or predicates1[i] == 'a':  # if the object is a type, we keep it for the pattern
                         triple_patterns.append(
                             {'subject':    '?S' + str(id_subject),
-                             'predicate':   str(predicates1[i]),
+                             'predicate':  'rdf:type',
                              'object':     objects1[i],
                              'source':     source})
                     else:
@@ -192,7 +192,7 @@ def S2S_joinDetection(yarrrml1, yarrrml2, Jaccard_treshold):
                         if predicates2[i] == 'rdf:type' or predicates2[i] == 'a':  # if the object is a type, we keep it for the pattern
                             triple_patterns.append(
                                 {'subject':    '?S' + str(id_subject),
-                                 'predicate':   str(predicates2[i]),
+                                 'predicate':  'rdf:type',
                                  'object':     objects2[i],
                                  'source':     source})
                         else:
@@ -276,7 +276,7 @@ def O2O_joinDetection(yarrrml1, yarrrml2, Jaccard_treshold):
                         if predicates1[i] == 'rdf:type' or predicates1[i] == 'a':  # if the object is a type, we keep it for the pattern
                             triple_patterns.append(
                                 {'subject':    '?S' + str(id_subject),
-                                 'predicate':   str(predicates1[i]),
+                                 'predicate':  'rdf:type',
                                  'object':     object1[1],
                                  'source':     source})
                         else:
@@ -295,12 +295,11 @@ def O2O_joinDetection(yarrrml1, yarrrml2, Jaccard_treshold):
                         id_subject = id_subject + 1
 
                         if predicates2[i] == 'rdf:type' or predicates2[i] == 'a':  # if the object is a type, we keep it for the pattern
-                            pass
-                            """triple_patterns.append(
+                            triple_patterns.append(
                                 {'subject':    '?S' + str(id_subject),
-                                 'predicate':   str(predicates2[i]),
+                                 'predicate':  'rdf:type',
                                  'object':     object2[1],
-                                 'source':     source})"""
+                                 'source':     source})
                         else:
                             triple_patterns.append(
                                 {'subject':    '?S' + str(id_subject),
@@ -386,7 +385,7 @@ def S2O_joinDetection(yarrrml1, yarrrml2, Jaccard_treshold, reversed=False):
                     if predicates1[i] == 'rdf:type' or predicates1[i] == 'a':  # if the object is a type, we keep it for the pattern
                         triple_patterns.append(
                             {'subject':    '?T' + str(id_template),
-                             'predicate':   str(predicates1[i]),
+                             'predicate':  'rdf:type',
                              'object':     objects1[i],
                              'source':     source})
                     else:
