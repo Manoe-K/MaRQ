@@ -63,10 +63,9 @@ for i in range(len(l_mapping)):
 
 # Print the results
 for pair in range(len(MaRQ_results)):
-    print()
-    print('subject-subject:')
     for k in range(len(MaRQ_results[pair]['result']['subject-subject']['templates'])):
         print()
+        print('### subject-subject')
         print('#M1:', MaRQ_results[pair]['name1'])
         print('#M2:', MaRQ_results[pair]['name2'])
         print('#M1_Subject :\t' + MaRQ_results[pair]['result']['subject-subject']['templates'][k]['M1'])
@@ -77,11 +76,9 @@ for pair in range(len(MaRQ_results)):
             print('\t' + triple_pattern_to_sparql(pattern))
         print('}')
 
-    print()
-    print()
-    print('object-object:')
     for k in range(len(MaRQ_results[pair]['result']['object-object']['templates'])):
         print()
+        print('### object-object')
         print('#M1:', MaRQ_results[pair]['name1'])
         print('#M2:', MaRQ_results[pair]['name2'])
         print('#M1_Object :\t' + MaRQ_results[pair]['result']['object-object']['templates'][k]['M1'])
@@ -98,11 +95,9 @@ for pair in range(len(MaRQ_results)):
             print('\t' + triple_pattern_to_sparql(pattern))
         print('}')
 
-    print()
-    print()
-    print('subject-object:')
     for k in range(len(MaRQ_results[pair]['result']['subject-object']['templates'])):
         print()
+        print('### subject-object')
         print('#M1:', MaRQ_results[pair]['name1'])
         print('#M2:', MaRQ_results[pair]['name2'])
         print('#M1_Subject :\t' + MaRQ_results[pair]['result']['subject-object']['templates'][k]['M1'])
@@ -113,11 +108,9 @@ for pair in range(len(MaRQ_results)):
             print('\t' + triple_pattern_to_sparql(pattern))
         print('}')
 
-    print()
-    print()
-    print('object-subject:')
     for k in range(len(MaRQ_results[pair]['result']['object-subject']['templates'])):
         print()
+        print('### subject-object')
         print('#M1:', MaRQ_results[pair]['name1'])
         print('#M2:', MaRQ_results[pair]['name2'])
         print('#M1_Object :\t' + MaRQ_results[pair]['result']['object-subject']['templates'][k]['M1'])
