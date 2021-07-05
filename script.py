@@ -3,9 +3,6 @@ import os
 import re
 
 import MaRQ
-#import common_ontology as CO
-#import create_queries as cq
-
 
 def is_number(string):
     try:
