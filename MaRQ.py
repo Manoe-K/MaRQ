@@ -30,7 +30,7 @@ def get_subjects(yarrrml):
 
     subjects = set()
     for mapping_name, mapping in mappings.items():
-        subjects.add(get_keys(yarrrml, 'mappings')[mapping_name]['subject'])
+        subjects.add((mapping_name, get_keys(yarrrml, 'mappings')[mapping_name]['subject']))            # send both the reference and the template
 
     return subjects
 
@@ -126,15 +126,15 @@ def S2S_joinDetection(yarrrml1, yarrrml2, Jaccard_treshold):
     for subject1 in get_subjects(yarrrml1):
         for subject2 in get_subjects(yarrrml2):
 
-            predicates1, objects1 = get_triplets_of_subject(yarrrml1, subject1)
-            predicates2, objects2 = get_triplets_of_subject(yarrrml2, subject2)
+            predicates1, objects1 = get_triplets_of_subject(yarrrml1, subject1[1])
+            predicates2, objects2 = get_triplets_of_subject(yarrrml2, subject2[1])
 
             Jaccard = Jaccard_index(predicates1, predicates2, objects1, objects2)
 
-            if subject1 == subject2 or Jaccard >= Jaccard_treshold:
+            if Jaccard >= Jaccard_treshold:
 
-                templates.append({'M1': subject1,
-                                  'M2': subject2})
+                templates.append({'M1': subject1[0],
+                                  'M2': subject2[0]})
                 Jaccards.append(Jaccard)
                 id_subject = id_subject + 1
                 id_object = 0
@@ -334,7 +334,7 @@ def S2O_joinDetection(yarrrml1, yarrrml2, Jaccard_treshold, reversed=False):
     for subject in get_subjects(yarrrml1):
         for object in get_objects(yarrrml2):
 
-            predicates1, objects1 = get_triplets_of_subject(yarrrml1, subject)
+            predicates1, objects1 = get_triplets_of_subject(yarrrml1, subject[1])
             predicates2, objects2 = get_triplets_of_subject(yarrrml2, object[1])
 
             Jaccard = 0
@@ -344,11 +344,11 @@ def S2O_joinDetection(yarrrml1, yarrrml2, Jaccard_treshold, reversed=False):
             if subject == object or Jaccard >= Jaccard_treshold:
 
                 if not reversed:
-                    templates.append({'M1': subject,
+                    templates.append({'M1': subject[0],
                                       'M2': object[0]})
                 else:
                     templates.append({'M1': object[0],
-                                      'M2': subject})
+                                      'M2': subject[0]})
 
                 Jaccards.append(Jaccard)
                 id_template = id_template + 1
