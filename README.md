@@ -1,4 +1,4 @@
-# MappingQueryFinder
+# MaRQ: Mapping RDF Queries
 
 This project is an approach to generate federated queries from RDF mappings.
 

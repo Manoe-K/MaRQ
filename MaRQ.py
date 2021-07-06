@@ -159,16 +159,16 @@ def S2S_joinDetection(yarrrml1, yarrrml2, Jaccard_treshold):
 
                     if predicates1[i] == 'rdf:type' or predicates1[i] == 'a':  # if the object is a type, we keep it for the pattern
                         triple_patterns.append(
-                            {'subject':    '?S' + str(id_subject),
+                            {'subject':    '?s' + str(id_subject),
                              'predicate':  'rdf:type',
                              'object':     objects1[i],
                              'source':     source})
                     else:
                         id_object = id_object+1
                         triple_patterns.append(
-                            {'subject':    '?S' + str(id_subject),
+                            {'subject':    '?s' + str(id_subject),
                              'predicate':   str(predicates1[i]),
-                             'object':     '?O' + str(id_object),
+                             'object':     '?o' + str(id_object),
                              'source':     source})
 
                 for i in range(len(predicates2)):
@@ -191,16 +191,16 @@ def S2S_joinDetection(yarrrml1, yarrrml2, Jaccard_treshold):
 
                         if predicates2[i] == 'rdf:type' or predicates2[i] == 'a':  # if the object is a type, we keep it for the pattern
                             triple_patterns.append(
-                                {'subject':    '?S' + str(id_subject),
+                                {'subject':    '?s' + str(id_subject),
                                  'predicate':  'rdf:type',
                                  'object':     objects2[i],
                                  'source':     source})
                         else:
                             id_object = id_object+1
                             triple_patterns.append(
-                                {'subject':    '?S' + str(id_subject),
+                                {'subject':    '?s' + str(id_subject),
                                  'predicate':   str(predicates2[i]),
-                                 'object':     '?O' + str(id_object),
+                                 'object':     '?o' + str(id_object),
                                  'source':     source})
 
                 list_tp_per_template_count.append(tp_per_template_count)
@@ -275,15 +275,15 @@ def O2O_joinDetection(yarrrml1, yarrrml2, Jaccard_treshold):
 
                         if predicates1[i] == 'rdf:type' or predicates1[i] == 'a':  # if the object is a type, we keep it for the pattern
                             triple_patterns.append(
-                                {'subject':    '?S' + str(id_subject),
+                                {'subject':    '?s' + str(id_subject),
                                  'predicate':  'rdf:type',
                                  'object':     object1[1],
                                  'source':     source})
                         else:
                             triple_patterns.append(
-                                {'subject':    '?S' + str(id_subject),
+                                {'subject':    '?s' + str(id_subject),
                                  'predicate':   str(predicates1[i]),
-                                 'object':     '?O' + str(id_object),
+                                 'object':     '?o' + str(id_object),
                                  'source':     source})
 
                 for i in range(len(predicates2)):
@@ -296,15 +296,15 @@ def O2O_joinDetection(yarrrml1, yarrrml2, Jaccard_treshold):
 
                         if predicates2[i] == 'rdf:type' or predicates2[i] == 'a':  # if the object is a type, we keep it for the pattern
                             triple_patterns.append(
-                                {'subject':    '?S' + str(id_subject),
+                                {'subject':    '?s' + str(id_subject),
                                  'predicate':  'rdf:type',
                                  'object':     object2[1],
                                  'source':     source})
                         else:
                             triple_patterns.append(
-                                {'subject':    '?S' + str(id_subject),
+                                {'subject':    '?s' + str(id_subject),
                                  'predicate':   str(predicates2[i]),
-                                 'object':     '?O' + str(id_object),
+                                 'object':     '?o' + str(id_object),
                                  'source':     source})
 
                 list_tp_per_template_count.append(tp_per_template_count)
@@ -384,16 +384,16 @@ def S2O_joinDetection(yarrrml1, yarrrml2, Jaccard_treshold, reversed=False):
 
                     if predicates1[i] == 'rdf:type' or predicates1[i] == 'a':  # if the object is a type, we keep it for the pattern
                         triple_patterns.append(
-                            {'subject':    '?T' + str(id_template),
+                            {'subject':    '?t' + str(id_template),
                              'predicate':  'rdf:type',
                              'object':     objects1[i],
                              'source':     source})
                     else:
                         id_filler = id_filler + 1
                         triple_patterns.append(
-                            {'subject':    '?T' + str(id_template),
+                            {'subject':    '?t' + str(id_template),
                              'predicate':   str(predicates1[i]),
-                             'object':     '?F' + str(id_filler),
+                             'object':     '?f' + str(id_filler),
                              'source':     source})
 
                 for i in range(len(predicates2)):
@@ -411,9 +411,9 @@ def S2O_joinDetection(yarrrml1, yarrrml2, Jaccard_treshold, reversed=False):
                     id_filler = id_filler + 1
 
                     triple_patterns.append(
-                        {'subject':    '?F' + str(id_filler),
+                        {'subject':    '?f' + str(id_filler),
                          'predicate':   str(predicates2[i]),
-                         'object':     '?T' + str(id_template),
+                         'object':     '?t' + str(id_template),
                          'source':     source})
 
                 list_tp_per_template_count.append(tp_per_template_count)

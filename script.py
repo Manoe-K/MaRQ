@@ -62,6 +62,8 @@ for i in range(len(l_mapping)):
 
 
 # Print the results
+print()
+print('### This file contains queries deduced by the MaRQ tool available at https://github.com/Manoe-K/MaRQ')
 for pair in range(len(MaRQ_results)):
     for k in range(len(MaRQ_results[pair]['result']['subject-subject']['templates'])):
         print()
