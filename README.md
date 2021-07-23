@@ -51,40 +51,69 @@ It's also possible to specify the threshold at which a query is made from two te
 
 ## Example
 
-This exemple is made using the mappings `air-bnb-listings@public.rml.yml` and `annuaire-des-professionnels-de-sante@public.rml.yml`.
+This example is made using the mappings `small-air-bnb-listings@public.rml.yml` and `small-annuaire-des-professionnels-de-sante@public.rml.yml`.
 
+Here are examples of query formed with those mappings
 ```
-SELECT *  WHERE {
- ?s1 rdf:type schema:Person . 
- ?s1 rdf:type lgdo:Doctor .  
- ?s1 rdf:type gr:BusinessEntity .
- ?s1 schema:location ?o1 . 
- ?s1 dbo:speciality ?o2
- }
+### subject-subject
+#M1: small-air-bnb-listings
+#M2: small-annuaire-des-professionnels-de-sante
+#M1_Subject :   Host
+#M2_Subject :   Docteur
+#Jaccard index: 0.3333333333333333
+Select Count(?S2) Where {
+        ?s2 rdf:type <http://schema.org/Person>.        #M1 M2
+        ?s2 rdf:type <http://purl.org/goodrelations/v1#BusinessEntity>. #M1
+        ?s2 rdf:type <http://linkedgeodata.org/ontology/Doctor>.        #M2
+        ?s2 <https://schema.org/location> ?o1.  #M2
+        ?s2 <http://dbpedia.org/ontology/speciality> ?o2.       #M2
+}
  ```
+ This is a "subject-subject" query, which means the two templates that were used to join the mappings were both subjects in their respective mappings.
  
  ```
- SELECT *  WHERE {
- ?s1 schema:location ?o1 . 
- ?s2 schema:containedInPlace ?o1
- }
+### object-object
+#M1: small-air-bnb-listings
+#M2: small-annuaire-des-professionnels-de-sante
+#M1_Object :    Neighbourhood
+#M2_Object :    Address
+#Jaccard index: 0.3333333333333333
+Select Count(?O2) Where {
+        ?s1 <https://schema.org/containedInPlace> ?o2.  #M1
+        ?s2 <https://schema.org/location> ?o2.  #M2
+}
  ```
+ This is a "object-object" query, which means the two templates that were used to join the mappings were both objects in their respective mappings.
  
  ```
- SELECT *  WHERE {
- ?t1 rdf:type schema:Person . 
- ?t1 rdf:type lgdo:Doctor . 
- ?t1 schema:location ?f1 .
- ?t1 dbo:speciality ?f2 . 
- ?f3 dbo:owner ?t1
- }
+### subject-object
+#M1: small-air-bnb-listings
+#M2: small-annuaire-des-professionnels-de-sante
+#M1_Object :    Host
+#M2_Subject :   Docteur
+#Jaccard index: 0.3333333333333333
+Select Count(?T1) Where {
+        ?t1 rdf:type <http://schema.org/Person>.        #M2
+        ?t1 rdf:type <http://linkedgeodata.org/ontology/Doctor>.        #M2
+        ?t1 <https://schema.org/location> ?f1.  #M2
+        ?t1 <http://dbpedia.org/ontology/speciality> ?f2.       #M2
+        ?f3 <http://dbpedia.org/ontology/owner> ?t1.    #M1
+}
  ```
+ This is a "subject-object" query, which means the one of the templates that were used to join the mappings was a subject in its mapping and the other template was a object in hin the other a object
  
  ```
- SELECT *  WHERE {
- ?t2 rdf:type schema:Place .
- ?t2 rdf:type dbo:PopulatedPlace .
- ?f1 schema:location ?t2
- }
+### subject-object
+#M1: small-air-bnb-listings
+#M2: small-annuaire-des-professionnels-de-sante
+#M1_Subject :   Neighbourhood
+#M2_Object :    Address
+#Jaccard index: 0.3333333333333333
+Select Count(?T1) Where {
+        ?t1 rdf:type <http://schema.org/Place>. #M1
+        ?t1 rdf:type <http://dbpedia.org/ontology/PopulatedPlace>.      #M1
+        ?f1 <https://schema.org/location> ?t1.  #M2
+}
  ```
+ This is a "subject-object" query.
 
