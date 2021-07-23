@@ -122,5 +122,5 @@ Select Count(?T1) Where {
         ?f1 <https://schema.org/location> ?t1.  #M2
 }
  ```
- This is a "subject-object" query.
+ This is another "subject-object" query, this time the subject is in mapping1 and the object is in mapping2
 
