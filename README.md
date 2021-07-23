@@ -49,3 +49,42 @@ It's also possible to specify the threshold at which a query is made from two te
 
 `python script.py float_value path/to/directory`
 
+## Example
+
+This exemple is made using the mappings `air-bnb-listings@public.rml.yml` and `annuaire-des-professionnels-de-sante@public.rml.yml`.
+
+```
+SELECT *  WHERE {
+ ?s1 rdf:type schema:Person . 
+ ?s1 rdf:type lgdo:Doctor .  
+ ?s1 rdf:type gr:BusinessEntity .
+ ?s1 schema:location ?o1 . 
+ ?s1 dbo:speciality ?o2
+ }
+ ```
+ 
+ ```
+ SELECT *  WHERE {
+ ?s1 schema:location ?o1 . 
+ ?s2 schema:containedInPlace ?o1
+ }
+ ```
+ 
+ ```
+ SELECT *  WHERE {
+ ?t1 rdf:type schema:Person . 
+ ?t1 rdf:type lgdo:Doctor . 
+ ?t1 schema:location ?f1 .
+ ?t1 dbo:speciality ?f2 . 
+ ?f3 dbo:owner ?t1
+ }
+ ```
+ 
+ ```
+ SELECT *  WHERE {
+ ?t2 rdf:type schema:Place .
+ ?t2 rdf:type dbo:PopulatedPlace .
+ ?f1 schema:location ?t2
+ }
+ ```
+
