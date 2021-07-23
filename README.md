@@ -58,7 +58,8 @@ Each of those first features comments that indicates meta information on the que
 - the type of join
 - the mappings
 - Which template of which mapping was used, and in which position
-- The jaccard index number, which tells us how much the two template were similar. This index is calculated using the types link to a template, we consider both sets of types (one for each template) and then calculate the Jaccard index `https://en.wikipedia.org/wiki/Jaccard_index`
+- The jaccard index number, which tells us how much the two template were similar. This index is calculated using the types link to a template, we consider both sets of types (one for each template) and then calculate the [Jaccard index](https://en.wikipedia.org/wiki/Jaccard_index)
+
  
 ```
 ### subject-subject
